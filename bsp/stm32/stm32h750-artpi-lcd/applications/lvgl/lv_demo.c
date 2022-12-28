@@ -34,15 +34,6 @@ static void lvgl_thread(void *parameter)
         rt_thread_mdelay(10);
     }
 }
-void lv_user_gui_init(void)
-{
-    /* display demo; you may replace with your LVGL application at here */
- //   extern void lv_demo_music(void);
-//    lv_demo_music();
-//    extern void lv_example_btn_1(void);
-//    lv_example_btn_1();
-}
-
 
 static int lvgl_demo_init(void)
 {

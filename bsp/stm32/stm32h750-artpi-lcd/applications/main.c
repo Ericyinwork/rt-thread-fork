@@ -12,7 +12,6 @@
 #include <rtdevice.h>
 #include <board.h>
 
-
 /* defined the LED0 pin: PI8 */
 #define LED0_PIN    GET_PIN(I, 8)
 
@@ -22,7 +21,6 @@
 
 int main(void)
 {
-
     /* set LED0 pin mode to output */
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
     #ifdef RT_USING_WIFI
