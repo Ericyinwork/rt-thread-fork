@@ -149,6 +149,7 @@
 #define PKG_LVGL_USING_V08034
 #define PKG_LVGL_VER_NUM 0x08034
 #define PKG_USING_LV_MUSIC_DEMO
+#define PKG_USING_GUI_GUIDER_DEMO
 
 /* u8g2: a monochrome graphic library */
 
@@ -158,6 +159,12 @@
 
 /* tools packages */
 
+#define PKG_USING_CMBACKTRACE
+#define PKG_CMBACKTRACE_PLATFORM_M7
+#define PKG_CMBACKTRACE_DUMP_STACK
+#define PKG_CMBACKTRACE_PRINT_ENGLISH
+#define PKG_USING_CMBACKTRACE_V10401
+#define PKG_CMBACKTRACE_VER_NUM 0x10401
 
 /* system packages */
 

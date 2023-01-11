@@ -14,7 +14,6 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-
 #ifndef LV_THREAD_STACK_SIZE
 #define LV_THREAD_STACK_SIZE 4096
 #endif
@@ -25,21 +24,12 @@
 
 static void lvgl_thread(void *parameter)
 {
-  // extern void lv_demo_music1(void);
-	//lv_demo_music();
-	//lv_demo_music1();
-//	extern void gui_guider_setup(void);
-//	gui_guider_setup();
+   //extern void lv_demo_music(void);
+		//lv_demo_music();
+	extern void gui_guider_setup(void);
+	gui_guider_setup();
 
     /* handle the tasks of LVGL */
-	  lv_obj_t * obj = lv_obj_create(lv_scr_act());
-    lv_obj_set_width(obj, 200);
-    lv_obj_set_height(obj, 200);
-    lv_obj_set_size(obj,100, 200);
-
-    //printf("w:%d\n", lv_obj_get_width(obj));
-    //printf("h:%d\n", lv_obj_get_height(obj));
-
     while(1)
     {
         lv_task_handler();

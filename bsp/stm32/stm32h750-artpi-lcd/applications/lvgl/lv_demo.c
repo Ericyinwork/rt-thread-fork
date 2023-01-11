@@ -22,16 +22,27 @@
 #define LV_THREAD_PRIO (RT_THREAD_PRIORITY_MAX * 2 / 3)
 #endif
 
+static void lv_user_gui_init(void)
+{
+	    lv_obj_t * obj = lv_obj_create(lv_scr_act());
+    lv_obj_set_size(obj, LV_PCT(20), LV_PCT(10));
+    lv_obj_align(obj, LV_ALIGN_CENTER, 0, 0);
+
+    lv_obj_t * label = lv_label_create(obj);
+    lv_label_set_text(label, "Hello, LVGL!");
+    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+}
+
 static void lvgl_thread(void *parameter)
 {
-    extern void lv_demo_music(void);
-    lv_demo_music();
-
+   // extern void lv_demo_music(void);
+   // lv_demo_music();
+		lv_user_gui_init();
     /* handle the tasks of LVGL */
     while(1)
     {
         lv_task_handler();
-        rt_thread_mdelay(10);
+        rt_thread_mdelay(100);
     }
 }
 
