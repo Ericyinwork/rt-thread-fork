@@ -379,7 +379,7 @@ int stime(const time_t *t)
     if (t == RT_NULL)
     {
         rt_set_errno(EFAULT);
-        return -RT_ERROR;
+        return -1;
     }
 
     tv.tv_sec = *t;
@@ -390,7 +390,7 @@ int stime(const time_t *t)
     else
     {
         rt_set_errno(EFAULT);
-        return -RT_ERROR;
+        return -1;
     }
 }
 RTM_EXPORT(stime);
@@ -404,7 +404,7 @@ time_t timegm(struct tm * const t)
     if(t == RT_NULL)
     {
         rt_set_errno(EFAULT);
-        return (time_t)-RT_ERROR;
+        return (time_t)-1;
     }
 
     years = (time_t)t->tm_year - 70;
@@ -446,7 +446,7 @@ time_t timegm(struct tm * const t)
     if (t->tm_year < 70)
     {
         rt_set_errno(EINVAL);
-        return (time_t) -RT_ERROR;
+        return (time_t) -1;
     }
 
     /* Days since 1970 is 365 * number of years + number of leap years since 1970 */
@@ -500,7 +500,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     else
     {
         rt_set_errno(EINVAL);
-        return -RT_ERROR;
+        return -1;
     }
 }
 RTM_EXPORT(gettimeofday);
@@ -521,7 +521,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
     else
     {
         rt_set_errno(EINVAL);
-        return -RT_ERROR;
+        return -1;
     }
 }
 RTM_EXPORT(settimeofday);
@@ -532,13 +532,13 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     if (rqtp->tv_sec < 0 || rqtp->tv_nsec < 0 || rqtp->tv_nsec >= NANOSECOND_PER_SECOND)
     {
         rt_set_errno(EINVAL);
-        return -RT_ERROR;
+        return -1;
     }
 #ifdef RT_USING_CPUTIME
     uint64_t cpu_tick, cpu_tick_old;
     cpu_tick_old = clock_cpu_gettime();
     rt_tick_t tick;
-    float unit = clock_cpu_getres();
+    double unit = clock_cpu_getres();
 
     cpu_tick = (rqtp->tv_sec * NANOSECOND_PER_SECOND + ((uint64_t)rqtp->tv_nsec * NANOSECOND_PER_SECOND) / NANOSECOND_PER_SECOND) / unit;
     tick = (unit * cpu_tick) / (NANOSECOND_PER_SECOND / RT_TICK_PER_SECOND);
@@ -549,11 +549,11 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
         if (rmtp)
         {
             uint64_t rmtp_cpu_tick = cpu_tick_old + cpu_tick - clock_cpu_gettime();
-            rmtp->tv_sec = ((int)(rmtp_cpu_tick * unit)) / NANOSECOND_PER_SECOND;
-            rmtp->tv_nsec = ((int)(rmtp_cpu_tick * unit)) % NANOSECOND_PER_SECOND;
+            rmtp->tv_sec = ((time_t)(rmtp_cpu_tick * unit)) / NANOSECOND_PER_SECOND;
+            rmtp->tv_nsec = ((long)(rmtp_cpu_tick * unit)) % NANOSECOND_PER_SECOND;
         }
         rt_set_errno(EINTR);
-        return -RT_ERROR;
+        return -1;
     }
     else
         while (clock_cpu_gettime() - cpu_tick_old < cpu_tick);
@@ -572,7 +572,7 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
             rmtp->tv_nsec = (tick % RT_TICK_PER_SECOND) * (NANOSECOND_PER_SECOND / RT_TICK_PER_SECOND);
         }
         rt_set_errno(EINTR);
-        return -RT_ERROR;
+        return -1;
     }
 #endif
     return 0;
@@ -610,7 +610,7 @@ static int _rt_clock_time_system_init(void)
     _timevalue.tv_sec = 0;
     rt_hw_interrupt_enable(level);
 
-    return -RT_ERROR;
+    return -1;
 }
 INIT_COMPONENT_EXPORT(_rt_clock_time_system_init);
 #endif /* RT_USING_RTC */
@@ -619,14 +619,14 @@ int clock_getres(clockid_t clockid, struct timespec *res)
 {
 #ifndef RT_USING_RTC
     LOG_W(_WARNING_NO_RTC);
-    return -RT_ERROR;
+    return -1;
 #else
     int ret = 0;
 
     if (res == RT_NULL)
     {
         rt_set_errno(EFAULT);
-        return -RT_ERROR;
+        return -1;
     }
 
     switch (clockid)
@@ -646,7 +646,7 @@ int clock_getres(clockid_t clockid, struct timespec *res)
     default:
         res->tv_sec  = 0;
         res->tv_nsec = 0;
-        ret = -RT_ERROR;
+        ret = -1;
         rt_set_errno(EINVAL);
         break;
     }
@@ -660,21 +660,21 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
 {
 #ifndef RT_USING_RTC
     LOG_W(_WARNING_NO_RTC);
-    return -RT_ERROR;
+    return -1;
 #else
     int ret = 0;
 
     if (tp == RT_NULL)
     {
         rt_set_errno(EFAULT);
-        return -RT_ERROR;
+        return -1;
     }
 
     switch (clockid)
     {
     case CLOCK_REALTIME:
         {
-            int tick;
+            rt_tick_t tick;
             rt_base_t level;
 
             level = rt_hw_interrupt_disable();
@@ -686,16 +686,17 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
         break;
 
 #ifdef RT_USING_CPUTIME
+    case CLOCK_MONOTONIC:
     case CLOCK_CPUTIME_ID:
         {
-            float unit = 0;
-            long long cpu_tick;
+            double unit = 0;
+            uint64_t cpu_tick;
 
             unit = clock_cpu_getres();
             cpu_tick = clock_cpu_gettime();
 
-            tp->tv_sec  = ((long long)(cpu_tick * unit)) / NANOSECOND_PER_SECOND;
-            tp->tv_nsec = ((long long)(cpu_tick * unit)) % NANOSECOND_PER_SECOND;
+            tp->tv_sec  = ((uint64_t)(cpu_tick * unit)) / NANOSECOND_PER_SECOND;
+            tp->tv_nsec = ((uint64_t)(cpu_tick * unit)) % NANOSECOND_PER_SECOND;
         }
         break;
 #endif
@@ -703,7 +704,7 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
         tp->tv_sec  = 0;
         tp->tv_nsec = 0;
         rt_set_errno(EINVAL);
-        ret = -RT_ERROR;
+        ret = -1;
     }
 
     return ret;
@@ -715,12 +716,12 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
 {
 #ifndef RT_USING_RTC
     LOG_W(_WARNING_NO_RTC);
-    return -RT_ERROR;
+    return -1;
 #else
     if (rqtp->tv_sec < 0 || rqtp->tv_nsec < 0 || rqtp->tv_nsec >= NANOSECOND_PER_SECOND)
     {
         rt_set_errno(EINVAL);
-        return -RT_ERROR;
+        return -1;
     }
     switch (clockid)
     {
@@ -738,6 +739,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
             tick = rqtp->tv_sec * RT_TICK_PER_SECOND + ((uint64_t)(rqtp->tv_nsec) * RT_TICK_PER_SECOND) / NANOSECOND_PER_SECOND;
         }
         rt_thread_delay(tick);
+
         if (rt_get_errno() == -RT_EINTR)
         {
             if (rmtp)
@@ -748,7 +750,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
                 rmtp->tv_nsec = (tick % RT_TICK_PER_SECOND) * (NANOSECOND_PER_SECOND / RT_TICK_PER_SECOND);
             }
             rt_set_errno(EINTR);
-            return -RT_ERROR;
+            return -1;
         }
     }
     break;
@@ -760,7 +762,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
         uint64_t cpu_tick, cpu_tick_old;
         cpu_tick_old = clock_cpu_gettime();
         rt_tick_t tick;
-        float unit = clock_cpu_getres();
+        double unit = clock_cpu_getres();
 
         cpu_tick = (rqtp->tv_sec * NANOSECOND_PER_SECOND + rqtp->tv_nsec * (NANOSECOND_PER_SECOND / NANOSECOND_PER_SECOND)) / unit;
         if ((flags & TIMER_ABSTIME) == TIMER_ABSTIME)
@@ -773,11 +775,11 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
             if (rmtp)
             {
                 uint64_t rmtp_cpu_tick = cpu_tick_old + cpu_tick - clock_cpu_gettime();
-                rmtp->tv_sec = ((int)(rmtp_cpu_tick * unit)) / NANOSECOND_PER_SECOND;
-                rmtp->tv_nsec = ((int)(rmtp_cpu_tick * unit)) % NANOSECOND_PER_SECOND;
+                rmtp->tv_sec = ((time_t)(rmtp_cpu_tick * unit)) / NANOSECOND_PER_SECOND;
+                rmtp->tv_nsec = ((long)(rmtp_cpu_tick * unit)) % NANOSECOND_PER_SECOND;
             }
             rt_set_errno(EINTR);
-            return -RT_ERROR;
+            return -1;
         }
         else
             while (clock_cpu_gettime() - cpu_tick_old < cpu_tick);
@@ -786,7 +788,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
 #endif
     default:
         rt_set_errno(EINVAL);
-        return -RT_ERROR;
+        return -1;
     }
     return 0;
 #endif
@@ -797,7 +799,7 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
 {
 #ifndef RT_USING_RTC
     LOG_W(_WARNING_NO_RTC);
-    return -RT_ERROR;
+    return -1;
 #else
     rt_base_t level;
     int second;
@@ -807,7 +809,7 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     if ((clockid != CLOCK_REALTIME) || (tp == RT_NULL))
     {
         rt_set_errno(EFAULT);
-        return -RT_ERROR;
+        return -1;
     }
 
     /* get second */
@@ -817,7 +819,7 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     tick = rt_tick_get(); /* get tick */
     /* update timevalue */
     _timevalue.tv_usec = MICROSECOND_PER_SECOND - (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
-    _timevalue.tv_sec = second - tick/RT_TICK_PER_SECOND - 1;
+    _timevalue.tv_sec = second - tick / RT_TICK_PER_SECOND - 1;
     rt_hw_interrupt_enable(level);
 
     /* update for RTC device */
@@ -831,7 +833,7 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
         }
     }
 
-    return -RT_ERROR;
+    return -1;
 #endif /* RT_USING_RTC */
 }
 RTM_EXPORT(clock_settime);
@@ -935,14 +937,14 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
          evp->sigev_notify != SIGEV_SIGNAL))
     {
         rt_set_errno(EINVAL);
-        return -RT_ERROR;
+        return -1;
     }
 
     timer = rt_malloc(sizeof(struct timer_obj));
     if(timer == RT_NULL)
     {
         rt_set_errno(ENOMEM);
-        return -RT_ENOMEM;
+        return -1;
     }
 
     rt_snprintf(timername, RT_NAME_MAX, "psx_tm%02d", num++);
@@ -969,7 +971,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 
     *timerid = (timer_t)((uintptr_t)timer >> 1);
 
-    return RT_EOK;
+    return 0;
 }
 RTM_EXPORT(timer_create);
 
@@ -985,7 +987,7 @@ int timer_delete(timer_t timerid)
     if (timer == RT_NULL || rt_object_get_type(&timer->timer.parent) != RT_Object_Class_Timer)
     {
         rt_set_errno(EINVAL);
-        return -RT_ERROR;
+        return -1;
     }
 
     if (timer->status == ACTIVE)
@@ -996,7 +998,7 @@ int timer_delete(timer_t timerid)
     rt_timer_detach(&timer->timer);
     rt_free(timer);
 
-    return RT_EOK;
+    return 0;
 }
 RTM_EXPORT(timer_delete);
 
@@ -1008,7 +1010,7 @@ RTM_EXPORT(timer_delete);
 int timer_getoverrun(timer_t timerid)
 {
     rt_set_errno(ENOSYS);
-    return -RT_ERROR;
+    return -1;
 }
 
 /**
@@ -1025,13 +1027,13 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
     if (timer == NULL || rt_object_get_type(&timer->timer.parent) != RT_Object_Class_Timer)
     {
         rt_set_errno(EINVAL);
-        return -RT_ERROR;
+        return -1;
     }
 
     if (its == NULL)
     {
         rt_set_errno(EFAULT);
-        return -RT_ERROR;
+        return -1;
     }
 
     if (timer->status == ACTIVE)
@@ -1073,7 +1075,7 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
 
     /* The interval last set by timer_settime() */
     its->it_interval = timer->interval;
-    return RT_EOK;
+    return 0;
 }
 RTM_EXPORT(timer_gettime);
 
@@ -1096,7 +1098,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
         value->it_value.tv_sec < 0)
     {
         rt_set_errno(EINVAL);
-        return -RT_ERROR;
+        return -1;
     }
 
     /*  Save time to expire and old reload value. */
@@ -1114,7 +1116,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
         }
 
         timer->status = NOT_ACTIVE;
-        return RT_EOK;
+        return 0;
     }
 
     /* calculate timer period(tick);  To avoid lost of accuracy, because "RT_TICK_PER_SECOND" maybe 100, 1000, 1024 and so on.
@@ -1128,7 +1130,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     {
 #ifndef RT_USING_RTC
     LOG_W(_WARNING_NO_RTC);
-    return -RT_ERROR;
+    return -1;
 #else
         rt_int64_t ts = ((value->it_value.tv_sec - _timevalue.tv_sec) * RT_TICK_PER_SECOND);
         rt_int64_t tns = (value->it_value.tv_nsec - _timevalue.tv_usec) * (RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND);
@@ -1159,7 +1161,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     rt_timer_control(&timer->timer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
     rt_timer_start(&timer->timer);
 
-    return RT_EOK;
+    return 0;
 }
 RTM_EXPORT(timer_settime);
 #endif /* RT_USING_POSIX_TIMER */

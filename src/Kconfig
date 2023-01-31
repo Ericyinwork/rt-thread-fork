@@ -3,12 +3,11 @@ menu "RT-Thread Kernel"
 
 config RT_NAME_MAX
     int "The maximal size of kernel object name"
-    range 0 64
+    range 1 64
     default 8
     help
         Each kernel object, such as thread, timer, semaphore etc, has a name,
         the RT_NAME_MAX is the maximal size of this object name.
-        If RT_NAME_MAX sets as 0, the name will be const.
 
 config RT_USING_ARCH_DATA_TYPE
     bool "Use the data types defined in ARCH_CPU"
@@ -53,7 +52,7 @@ config RT_CPUS_NR
 
 config RT_ALIGN_SIZE
     int "Alignment size for CPU architecture data access"
-    default 4
+    default 8
     help
         Alignment size for CPU architecture data access
 
@@ -303,6 +302,16 @@ menu "Inter-Thread communication"
 endmenu
 
 menu "Memory Management"
+
+    config RT_PAGE_MAX_ORDER
+        int "Max order of pages allocatable by page allocator"
+        default 11
+        help
+            For example, A value of 11 means the maximum chunk of contiguous memory
+            allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
+            Large memory requirement can consume all system resource, and should
+            consider reserved memory instead to enhance system endurance.
+            Max order should at least satisfied usage by huge page.
 
     config RT_USING_MEMPOOL
         bool "Using memory pool"

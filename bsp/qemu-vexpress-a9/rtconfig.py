@@ -37,7 +37,7 @@ BUILD       = 'debug'
 LINK_SCRIPT = 'link.lds'
 
 if PLATFORM == 'gcc':
-    PREFIX  = os.getenv('RTT_EXEC_PREFIX') or 'arm-none-eabi-'
+    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'arm-none-eabi-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
@@ -53,7 +53,7 @@ if PLATFORM == 'gcc':
     DEVICE   = ' -march=armv7-a -mtune=cortex-a7 -ftree-vectorize -ffast-math -funwind-tables -fno-strict-aliasing'
 
     CXXFLAGS= DEVICE + CFPFLAGS + ' -Wall'
-    CFLAGS  = DEVICE + CFPFLAGS + ' -Wall -std=gnu99'
+    CFLAGS  = DEVICE + CFPFLAGS + ' -Wall -Wno-cpp -std=gnu99 -D_POSIX_SOURCE '
     AFLAGS  = DEVICE + ' -c' + AFPFLAGS + ' -x assembler-with-cpp'    
     LFLAGS  = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T '+ LINK_SCRIPT + ' -lsupc++ -lgcc -static'
     CPATH   = ''
@@ -66,7 +66,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS   += ' -Os'
         CXXFLAGS += ' -Os'
-    CXXFLAGS += ' -Woverloaded-virtual -fno-exceptions -fno-rtti'
+    CXXFLAGS += ' -Woverloaded-virtual -fno-rtti'
 
     M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
     M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
