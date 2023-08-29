@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>STM32F103xB, __STDC_LIMIT_MACROS, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>STM32F103xB, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\dfs\include;..\..\..\components\finsh;.;..\..\..\include;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\libraries\HAL_Drivers\config;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\utilities\libadt;..\..\..\components\dfs\include;board\ports;..\..\..\components\drivers\include;.;..\..\..\components\finsh;..\..\..\components\libc\posix\io\poll;board;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;board\CubeMX_Config\Inc;..\..\..\libcpu\arm\cortex-m3;..\..\..\include;..\libraries\HAL_Drivers\CMSIS\Include;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;applications</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -377,6 +377,16 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
+        <Group>
+          <GroupName>ADT</GroupName>
+          <Files>
+            <File>
+              <FileName>avl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\utilities\libadt\avl.c</FilePath>
+            </File>
+          </Files>
+        </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
@@ -448,13 +458,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
