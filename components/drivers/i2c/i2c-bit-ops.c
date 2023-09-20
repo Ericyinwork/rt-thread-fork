@@ -54,7 +54,7 @@ static rt_err_t SCL_H(struct rt_i2c_bit_ops *ops)
     {
         if ((rt_tick_get() - start) > ops->timeout)
             return -RT_ETIMEOUT;
-        i2c_delay(ops);
+        rt_thread_delay((ops->timeout + 1) >> 1);
     }
 #ifdef RT_I2C_BITOPS_DEBUG
     if (rt_tick_get() != start)
@@ -372,8 +372,7 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
 {
     struct rt_i2c_msg *msg;
     struct rt_i2c_bit_ops *ops = (struct rt_i2c_bit_ops *)bus->priv;
-    rt_int32_t ret;
-    rt_uint32_t i;
+    rt_int32_t i, ret;
     rt_uint16_t ignore_nack;
 
     if (num == 0) return 0;
