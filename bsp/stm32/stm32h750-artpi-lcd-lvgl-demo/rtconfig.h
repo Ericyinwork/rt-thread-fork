@@ -32,6 +32,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_MEMHEAP
@@ -146,8 +147,8 @@
 #define PKG_LVGL_THREAD_PRIO 20
 #define PKG_LVGL_THREAD_STACK_SIZE 4096
 #define PKG_LVGL_DISP_REFR_PERIOD 5
-#define PKG_LVGL_USING_V08034
-#define PKG_LVGL_VER_NUM 0x08034
+#define PKG_LVGL_USING_LATEST_VERSION
+#define PKG_LVGL_VER_NUM 0x99999
 #define PKG_USING_LV_MUSIC_DEMO
 #define PKG_USING_GUI_GUIDER_DEMO
 
@@ -182,21 +183,12 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
-
-/* touch drivers */
-
-#define PKG_USING_FT6236
-#define PKG_USING_FT6236_LATEST_VERSION
 
 /* Kendryte SDK */
 
+#define PKG_USING_FT6236
 
 /* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -230,7 +222,6 @@
 /* Data Storage */
 
 /* Communication */
-
 
 /* Device Control */
 

@@ -32,6 +32,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_MEMHEAP
@@ -132,29 +133,8 @@
 
 /* language packages */
 
-/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
-
-
-/* XML: Extensible Markup Language */
-
 
 /* multimedia packages */
-
-/* LVGL: powerful and easy-to-use embedded GUI library */
-
-#define PKG_USING_LVGL
-#define PKG_LVGL_THREAD_PRIO 20
-#define PKG_LVGL_THREAD_STACK_SIZE 4096
-#define PKG_LVGL_DISP_REFR_PERIOD 5
-#define PKG_LVGL_USING_V08034
-#define PKG_LVGL_VER_NUM 0x08034
-#define PKG_USING_LV_MUSIC_DEMO
-#define PKG_USING_GUI_GUIDER_DEMO
-
-/* u8g2: a monochrome graphic library */
-
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
@@ -163,84 +143,19 @@
 #define PKG_CMBACKTRACE_PLATFORM_M7
 #define PKG_CMBACKTRACE_DUMP_STACK
 #define PKG_CMBACKTRACE_PRINT_ENGLISH
-#define PKG_USING_CMBACKTRACE_V10401
-#define PKG_CMBACKTRACE_VER_NUM 0x10401
+#define PKG_USING_CMBACKTRACE_V10300
+#define PKG_CMBACKTRACE_VER_NUM 0x10300
 
 /* system packages */
-
-/* enhanced kernel services */
-
-
-/* acceleration: Assembly language or algorithmic acceleration packages */
-
-
-/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
-
-
-/* Micrium: Micrium software products porting for RT-Thread */
 
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
-
-/* touch drivers */
-
-#define PKG_USING_FT6236
-#define PKG_USING_FT6236_LATEST_VERSION
-
-/* Kendryte SDK */
-
-
-/* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
-
 
 /* miscellaneous packages */
 
-/* project laboratory */
 
 /* samples: kernel and components samples */
-
-
-/* entertainment: terminal games and other interesting software packages */
-
-
-/* Arduino libraries */
-
-
-/* Projects */
-
-
-/* Sensors */
-
-
-/* Display */
-
-
-/* Timing */
-
-
-/* Data Processing */
-
-
-/* Data Storage */
-
-/* Communication */
-
-
-/* Device Control */
-
-
-/* Other */
-
-/* Signal IO */
-
-
-/* Uncategorized */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32H7

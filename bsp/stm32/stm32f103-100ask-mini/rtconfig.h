@@ -49,7 +49,10 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart"
 #define RT_VER_NUM 0x50000
+<<<<<<< HEAD
+=======
 #define RT_USING_HW_ATOMIC
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -137,39 +140,33 @@
 
 /* language packages */
 
-/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
-
-
-/* XML: Extensible Markup Language */
-
 
 /* multimedia packages */
 
+<<<<<<< HEAD
+=======
 /* LVGL: powerful and easy-to-use embedded GUI library */
 
 
 /* u8g2: a monochrome graphic library */
 
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 
 /* tools packages */
 
 
 /* system packages */
 
-/* enhanced kernel services */
-
-
-/* acceleration: Assembly language or algorithmic acceleration packages */
-
-
-/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
-
-
-/* Micrium: Micrium software products porting for RT-Thread */
-
 
 /* peripheral libraries and drivers */
 
+<<<<<<< HEAD
+#define PKG_USING_AGILE_BUTTON
+#define PKG_AGILE_BUTTON_DEBUG
+#define PKG_AGILE_BUTTON_THREAD_STACK_SIZE 256
+#define PKG_AGILE_BUTTON_THREAD_PRIORITY 28
+#define PKG_USING_AGILE_BUTTON_LATEST_VERSION
+=======
 /* sensors drivers */
 
 
@@ -181,16 +178,18 @@
 
 /* AI packages */
 
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 
 /* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
 
-/* project laboratory */
 
 /* samples: kernel and components samples */
 
+<<<<<<< HEAD
+=======
 
 /* entertainment: terminal games and other interesting software packages */
 
@@ -229,6 +228,7 @@
 
 /* Uncategorized */
 
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F1
 

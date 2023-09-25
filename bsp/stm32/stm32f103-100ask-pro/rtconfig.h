@@ -49,7 +49,10 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart"
 #define RT_VER_NUM 0x50000
+<<<<<<< HEAD
+=======
 #define RT_USING_HW_ATOMIC
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -178,6 +181,12 @@
 
 /* Kendryte SDK */
 
+#define PKG_USING_AGILE_LED
+#define PKG_AGILE_LED_USING_THREAD_AUTO_INIT
+#define PKG_AGILE_LED_THREAD_STACK_SIZE 256
+#define PKG_AGILE_LED_THREAD_PRIORITY 28
+#define PKG_USING_AGILE_LED_V111
+#define PKG_AGILE_LED_VER_NUM 0x10101
 
 /* AI packages */
 
@@ -217,12 +226,18 @@
 
 /* Communication */
 
+<<<<<<< HEAD
+/* Device Control */
+
+=======
 
 /* Device Control */
 
 
 /* Other */
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 
+/* Other */
 
 /* Signal IO */
 

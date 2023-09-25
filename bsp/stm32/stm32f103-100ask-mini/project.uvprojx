@@ -336,7 +336,11 @@
               <MiscControls />
               <Define>STM32F103xB, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine />
+<<<<<<< HEAD
+              <IncludePath>..\libraries\HAL_Drivers\config;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\utilities\libadt;..\..\..\components\dfs\include;board\ports;..\..\..\components\drivers\include;.;..\..\..\components\finsh;..\..\..\components\libc\posix\io\poll;board;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;board\CubeMX_Config\Inc;..\..\..\libcpu\arm\cortex-m3;..\..\..\include;..\libraries\HAL_Drivers\CMSIS\Include;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;applications</IncludePath>
+=======
               <IncludePath>.;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;board\ports;..\..\..\components\libc\posix\io\stdio;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\dfs\include;..\libraries\HAL_Drivers;applications;board\CubeMX_Config\Inc;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;board;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include</IncludePath>
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
             </VariousControls>
           </Cads>
           <Aads>
@@ -377,6 +381,16 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
+        <Group>
+          <GroupName>ADT</GroupName>
+          <Files>
+            <File>
+              <FileName>avl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\utilities\libadt\avl.c</FilePath>
+            </File>
+          </Files>
+        </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
@@ -450,6 +464,8 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
+<<<<<<< HEAD
+=======
               <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
@@ -457,6 +473,7 @@
           </Files>
           <Files>
             <File>
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
