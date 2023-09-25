@@ -49,6 +49,10 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart"
 #define RT_VER_NUM 0x50000
+<<<<<<< HEAD
+=======
+#define RT_USING_HW_ATOMIC
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -139,6 +143,14 @@
 
 /* multimedia packages */
 
+<<<<<<< HEAD
+=======
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+
+/* u8g2: a monochrome graphic library */
+
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 
 /* tools packages */
 
@@ -148,17 +160,75 @@
 
 /* peripheral libraries and drivers */
 
+<<<<<<< HEAD
 #define PKG_USING_AGILE_BUTTON
 #define PKG_AGILE_BUTTON_DEBUG
 #define PKG_AGILE_BUTTON_THREAD_STACK_SIZE 256
 #define PKG_AGILE_BUTTON_THREAD_PRIORITY 28
 #define PKG_USING_AGILE_BUTTON_LATEST_VERSION
+=======
+/* sensors drivers */
+
+
+/* touch drivers */
+
+
+/* Kendryte SDK */
+
+
+/* AI packages */
+
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
+
+/* Signal Processing and Control Algorithm Packages */
+
 
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
 
+<<<<<<< HEAD
+=======
+
+/* entertainment: terminal games and other interesting software packages */
+
+
+/* Arduino libraries */
+
+
+/* Projects */
+
+
+/* Sensors */
+
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+
+/* Signal IO */
+
+
+/* Uncategorized */
+
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F1
 

@@ -23,8 +23,10 @@
 
 /* kservice optimization */
 
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -46,9 +48,10 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart7"
-#define RT_VER_NUM 0x40101
-#define ARCH_ARM
+#define RT_VER_NUM 0x50001
+#define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
+#define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M4
 
@@ -72,13 +75,18 @@
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 
+/* DFS: device virtual file system */
+
+
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V2
 #define RT_SERIAL_USING_DMA
 #define RT_USING_PIN
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -140,9 +148,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -162,11 +167,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -179,13 +192,39 @@
 /* entertainment: terminal games and other interesting software packages */
 
 
-/* Privated Packages of RealThread */
+/* Arduino libraries */
 
 
-/* Network Utilities */
+/* Projects and Demos */
 
 
-/* RT-Thread Smart */
+/* Sensors */
+
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 #define SOC_FAMILY_RENESAS
 #define SOC_SERIES_R7FA6M4
@@ -196,6 +235,7 @@
 
 /* Onboard Peripheral Drivers */
 
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
@@ -203,6 +243,8 @@
 #define BSP_USING_UART7
 #define BSP_UART7_RX_BUFSIZE 256
 #define BSP_UART7_TX_BUFSIZE 0
+#define BSP_USING_SPI
+#define BSP_USING_SPI0
 
 /* Board extended module Drivers */
 

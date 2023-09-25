@@ -55,7 +55,6 @@
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
 #define KERNEL_VADDR_START 0x40000000
-#define PV_OFFSET 0x0
 #define ARCH_RISCV
 #define ARCH_RISCV64
 
@@ -147,6 +146,7 @@
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
+#define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 
@@ -161,6 +161,8 @@
 
 /* Utilities */
 
+#define RT_USING_ADT
+#define RT_USING_ADT_AVL
 
 /* RT-Thread Utestcases */
 
@@ -200,9 +202,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -222,11 +221,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -266,6 +273,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 

@@ -412,13 +412,13 @@ static rt_err_t rt_apm32_eth_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_apm32_eth_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t rt_apm32_eth_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t rt_apm32_eth_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t rt_apm32_eth_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
@@ -471,7 +471,7 @@ rt_err_t rt_apm32_eth_tx( rt_device_t dev, struct pbuf* p)
 
         /* Copy the frame to be sent into memory pointed by the current ETHERNET DMA Tx descriptor */
         to = (uint8_t*)((DMATxDescToSet->Buffer1Addr) + offset);
-        memcpy(to, q->payload, q->len);
+        SMEMCPY(to, q->payload, q->len);
         offset += q->len;
     }
 #ifdef ETH_TX_DUMP
@@ -552,7 +552,7 @@ struct pbuf *rt_apm32_eth_rx(rt_device_t dev)
             for (q = p; q != RT_NULL; q= q->next)
             {
                 /* Copy the received frame into buffer from memory pointed by the current ETHERNET DMA Rx descriptor */
-                memcpy(q->payload, (uint8_t *)((DMARxDescToGet->Buffer1Addr) + offset), q->len);
+                SMEMCPY(q->payload, (uint8_t *)((DMARxDescToGet->Buffer1Addr) + offset), q->len);
                 offset += q->len;
             }
 #ifdef ETH_RX_DUMP
@@ -724,11 +724,13 @@ static void phy_monitor_thread_entry(void *parameter)
 
 static int rt_hw_apm32_eth_init(void)
 {
+    /* reset phy */
     extern void phy_reset(void);
     phy_reset();
 
-    void ETH_GPIO_Configuration(void);
-    ETH_GPIO_Configuration();
+    /* apm32 eth gpio init */
+    extern void apm32_msp_eth_init(void *instance);
+    apm32_msp_eth_init(RT_NULL);
 
     apm32_eth_device.ETH_Speed = ETH_SPEED_100M;
     apm32_eth_device.ETH_Mode  = ETH_MODE_FULLDUPLEX;

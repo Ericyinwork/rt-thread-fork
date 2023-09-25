@@ -49,6 +49,10 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart"
 #define RT_VER_NUM 0x50000
+<<<<<<< HEAD
+=======
+#define RT_USING_HW_ATOMIC
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -150,9 +154,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -172,6 +173,11 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
@@ -183,6 +189,9 @@
 #define PKG_AGILE_LED_VER_NUM 0x10101
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -217,8 +226,16 @@
 
 /* Communication */
 
+<<<<<<< HEAD
 /* Device Control */
 
+=======
+
+/* Device Control */
+
+
+/* Other */
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
 
 /* Other */
 

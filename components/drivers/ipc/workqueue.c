@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,6 @@
  */
 
 #include <rthw.h>
-#include <rtthread.h>
 #include <rtdevice.h>
 
 #ifdef RT_USING_HEAP
@@ -93,30 +92,22 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
                                        struct rt_work *work, rt_tick_t ticks)
 {
     rt_base_t level;
-    rt_err_t err;
 
     level = rt_hw_interrupt_disable();
+
     /* remove list */
     rt_list_remove(&(work->list));
     work->flags &= ~RT_WORK_STATE_PENDING;
 
     if (ticks == 0)
     {
-        if (queue->work_current != work)
-        {
-            rt_list_insert_after(queue->work_list.prev, &(work->list));
-            work->flags |= RT_WORK_STATE_PENDING;
-            work->workqueue = queue;
-            err = RT_EOK;
-        }
-        else
-        {
-            err = -RT_EBUSY;
-        }
+        rt_list_insert_after(queue->work_list.prev, &(work->list));
+        work->flags |= RT_WORK_STATE_PENDING;
+        work->workqueue = queue;
 
         /* whether the workqueue is doing work */
         if (queue->work_current == RT_NULL &&
-                ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_STAT_MASK))
+                ((queue->work_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
         {
             /* resume work thread */
             rt_thread_resume(queue->work_thread);
@@ -127,7 +118,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         {
             rt_hw_interrupt_enable(level);
         }
-        return err;
+        return RT_EOK;
     }
     else if (ticks < RT_TICK_MAX / 2)
     {
@@ -198,7 +189,7 @@ static void _delayed_work_timeout_handler(void *parameter)
     }
     /* whether the workqueue is doing work */
     if (queue->work_current == RT_NULL &&
-            ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_STAT_MASK))
+            ((queue->work_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
     {
         /* resume work thread */
         rt_thread_resume(queue->work_thread);
@@ -356,7 +347,7 @@ rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *wo
     rt_list_insert_after(&queue->work_list, &(work->list));
     /* whether the workqueue is doing work */
     if (queue->work_current == RT_NULL &&
-            ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_STAT_MASK))
+            ((queue->work_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
     {
         /* resume work thread */
         rt_thread_resume(queue->work_thread);

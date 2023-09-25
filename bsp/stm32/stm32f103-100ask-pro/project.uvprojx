@@ -336,10 +336,17 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
+<<<<<<< HEAD
               <MiscControls></MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, STM32F103xE, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine></Undefine>
               <IncludePath>..\libraries\HAL_Drivers\config;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\utilities\libadt;..\..\..\components\dfs\include;board\ports;..\..\..\components\drivers\include;packages\agile_led-v1.1.1\inc;applications;..\..\..\components\finsh;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m3;.;board;..\..\..\include;..\libraries\HAL_Drivers\CMSIS\Include;..\libraries\HAL_Drivers;board\CubeMX_Config\Inc;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common</IncludePath>
+=======
+              <MiscControls />
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, STM32F103xE, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
+              <Undefine />
+              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;board\ports;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;board\CubeMX_Config\Inc;applications;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\dfs\include;..\libraries\HAL_Drivers;board;.;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include</IncludePath>
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
             </VariousControls>
           </Cads>
           <Aads>
@@ -459,6 +466,16 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
+<<<<<<< HEAD
+=======
+              <FileName>atomic_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
@@ -674,9 +691,9 @@
               <FilePath>..\..\..\src\object.c</FilePath>
             </File>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
             <File>
               <FileName>thread.c</FileName>

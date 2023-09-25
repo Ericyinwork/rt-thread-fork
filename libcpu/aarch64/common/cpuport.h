@@ -23,29 +23,20 @@ typedef union {
 } rt_hw_spinlock_t;
 #endif
 
-rt_inline void rt_hw_isb(void)
-{
-    asm volatile ("isb":::"memory");
-}
+#define rt_hw_barrier(cmd, ...) \
+    __asm__ volatile (RT_STRINGIFY(cmd) " "RT_STRINGIFY(__VA_ARGS__):::"memory")
 
-rt_inline void rt_hw_dmb(void)
-{
-    asm volatile ("dmb ish":::"memory");
-}
+#define rt_hw_isb() rt_hw_barrier(isb)
+#define rt_hw_dmb() rt_hw_barrier(dmb, ish)
+#define rt_hw_wmb() rt_hw_barrier(dmb, ishst)
+#define rt_hw_rmb() rt_hw_barrier(dmb, ishld)
+#define rt_hw_dsb() rt_hw_barrier(dsb, ish)
 
-rt_inline void rt_hw_wmb(void)
-{
-    asm volatile ("dmb ishst":::"memory");
-}
+#define rt_hw_wfi() rt_hw_barrier(wfi)
+#define rt_hw_wfe() rt_hw_barrier(wfe)
+#define rt_hw_sev() rt_hw_barrier(sev)
 
-rt_inline void rt_hw_rmb(void)
-{
-    asm volatile ("dmb ishld":::"memory");
-}
+#define rt_hw_cpu_relax() rt_hw_barrier(yield)
 
-rt_inline void rt_hw_dsb(void)
-{
-    asm volatile ("dsb ish":::"memory");
-}
-
+void _thread_start(void);
 #endif  /*CPUPORT_H__*/

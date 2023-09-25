@@ -14,11 +14,12 @@
  * FilePath: fgic.c
  * Date: 2022-03-28 09:30:23
  * LastEditTime: 2022-03-28 09:30:24
- * Description:  This file is for
+ * Description: This file is for the minimum required function implementations for this driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/4/16   init commit
  */
 
 #include "fgic.h"
@@ -48,7 +49,7 @@
 #define FGIC_GICD_4_PER_REG     4
 
 #define FGIC_INT_DEFAULT_PRI_X4     0xa0a0a0a0 /* 考虑到当前一般程序工作于EL1，对于NS 或 S 安全状态 ，0x80 - 0xff 的优先级都有存在的可能性 */
-#define FGIC_CPU_INTERFACE_DEFAULT_FLITER 0xFF
+#define FGIC_CPU_INTERFACE_DEFAULT_FILTER 0xFF
 
 typedef enum
 {
@@ -77,7 +78,7 @@ static FError FGicWaitRwp(uintptr ctrl_base, WAIT_RWP_MODE wait_mode)
     }
     else
     {
-        FGIC_DEBUG_E(" wait_mode not in WAIT_RWP_MODE ");
+        FGIC_DEBUG_E(" wait_mode not in WAIT_RWP_MODE.");
         return FGIC_CTLR_ERR_TYPE;
     }
 
@@ -85,7 +86,7 @@ static FError FGicWaitRwp(uintptr ctrl_base, WAIT_RWP_MODE wait_mode)
     {
         if (timeout_cnt ++ >= 0xffffff)
         {
-            FGIC_DEBUG_E(" wait rwp timeout ");
+            FGIC_DEBUG_E(" Wait rwp timeout.");
             return FGIC_CTLR_ERR_IN_GET;
         }
     }
@@ -235,7 +236,7 @@ void FGicCpuInterfaceInit(void)
         FASSERT(reg & GICC_SRE_SRE);
     }
 
-    FGicSetICC_PMR(FGIC_CPU_INTERFACE_DEFAULT_FLITER);
+    FGicSetICC_PMR(FGIC_CPU_INTERFACE_DEFAULT_FILTER);
 
     FGicEnableGroup1_EL1();
 
@@ -285,7 +286,7 @@ FError FGicIntEnable(FGic *instance_p, s32 int_id)
 
     if (int_id > instance_p->max_spi_num)
     {
-        FGIC_DEBUG_E("int_id is over max spi num for FGicIntEnable");
+        FGIC_DEBUG_E("int_id is over max spi num for FGicIntEnable.");
         return FGIC_CTLR_ERR_NUM;
     }
 
@@ -318,7 +319,7 @@ FError FGicIntDisable(FGic *instance_p, s32 int_id)
 
     if (int_id > instance_p->max_spi_num)
     {
-        FGIC_DEBUG_E("int_id is over max spi num for FGicIntDisable");
+        FGIC_DEBUG_E("int_id is over max spi num for FGicIntDisable.");
         return FGIC_CTLR_ERR_NUM;
     }
 
@@ -353,7 +354,7 @@ FError FGicSetPriority(FGic *instance_p, s32 int_id, u32 priority)
 
     if (int_id > instance_p->max_spi_num)
     {
-        FGIC_DEBUG_E("int_id is over max spi num for FGicSetPriority");
+        FGIC_DEBUG_E("int_id is over max spi num for FGicSetPriority.");
         return FGIC_CTLR_ERR_IN_GET;
     }
 
@@ -387,7 +388,7 @@ u32 FGicGetPriority(FGic *instance_p, s32 int_id)
 
     if (int_id > instance_p->max_spi_num)
     {
-        FGIC_DEBUG_E("int_id is over max spi num for FGicGetPriority");
+        FGIC_DEBUG_E("int_id is over max spi num for FGicGetPriority.");
         return (u32)FGIC_CTLR_ERR_IN_GET;
     }
 
@@ -420,7 +421,7 @@ FError FGicSetTriggerLevel(FGic *instance_p, s32 int_id, TRIGGER_LEVEL trigger_w
 
     if (int_id > instance_p->max_spi_num)
     {
-        FGIC_DEBUG_E("int_id is over max spi num for FGicSetTriggerLevel");
+        FGIC_DEBUG_E("int_id is over max spi num for FGicSetTriggerLevel.");
         return FGIC_CTLR_ERR_IN_SET;
     }
 
@@ -459,7 +460,7 @@ u32 FGicGetTriggerLevel(FGic *instance_p, s32 int_id)
 
     if (int_id > instance_p->max_spi_num)
     {
-        FGIC_DEBUG_E("int_id is over max spi num for FGicGetTriggerLevel");
+        FGIC_DEBUG_E("int_id is over max spi num for FGicGetTriggerLevel.");
         return (u32)FGIC_CTLR_ERR_IN_GET;
     }
 
@@ -501,7 +502,7 @@ FError FGicSetSpiAffinityRouting(FGic *instance_p, s32 int_id, SPI_ROUTING_MODE 
 
     if ((int_id > instance_p->max_spi_num)  || (int_id <= FGIC_PPI_END_ID))
     {
-        FGIC_DEBUG_E("int_id %d is out of range ", int_id);
+        FGIC_DEBUG_E("int_id %d is out of range.", int_id);
         return FGIC_CTLR_ERR_IN_SET;
     }
 
@@ -532,7 +533,7 @@ FError FGicGetAffinityRouting(FGic *instance_p, s32 int_id, SPI_ROUTING_MODE *ro
 
     if ((int_id > instance_p->max_spi_num)  || (int_id <= FGIC_PPI_END_ID))
     {
-        FGIC_DEBUG_E("int_id %d is out of range ", int_id);
+        FGIC_DEBUG_E("int_id %d is out of range.", int_id);
         return (u32)FGIC_CTLR_ERR_IN_GET;
     }
 
@@ -562,7 +563,7 @@ FError FGicGenerateSgi(FGic *instance_p, s32 int_id, u32 target_list, SGI_ROUTIN
 
     if (int_id > FGIC_SGI_END_ID)
     {
-        FGIC_DEBUG_E("int_id %d is out of range ", int_id);
+        FGIC_DEBUG_E("int_id %d is out of range.", int_id);
         return FGIC_CTLR_ERR_IN_SET;
     }
 

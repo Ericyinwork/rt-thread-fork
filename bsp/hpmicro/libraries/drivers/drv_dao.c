@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -214,7 +214,7 @@ static rt_err_t hpm_dao_stop(struct rt_audio_device* audio, int stream)
     return RT_EOK;
 }
 
-static rt_size_t hpm_dao_transmit(struct rt_audio_device* audio, const void* writeBuf, void* readBuf, rt_size_t size)
+static rt_ssize_t hpm_dao_transmit(struct rt_audio_device* audio, const void* writeBuf, void* readBuf, rt_size_t size)
 {
     RT_ASSERT(audio != RT_NULL);
 
@@ -235,7 +235,7 @@ static rt_size_t hpm_dao_transmit(struct rt_audio_device* audio, const void* wri
         l1c_dc_writeback((uint32_t)writeBuf, size);
     }
 
-    if (status_success != dma_setup_channel(dma_resource.base, dma_resource.channel, &ch_config)) {
+    if (status_success != dma_setup_channel(dma_resource.base, dma_resource.channel, &ch_config, true)) {
         return 0;
     }
 
@@ -287,4 +287,3 @@ INIT_DEVICE_EXPORT(rt_hw_dao_init);
 
 
 #endif /* BSP_USING_DAO */
-

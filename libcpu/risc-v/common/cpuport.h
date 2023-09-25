@@ -8,17 +8,13 @@
  * 2018-10-03     Bernard      The first version
  * 2020/11/20     BalanceTWK   Add FPU support
  * 2023/01/04     WangShun     Adapt to CH32
+ * 2023/08/11     HPMicro      Define ARCH_RISCV_FPU if FPU is enabled
  */
 
 #ifndef CPUPORT_H__
 #define CPUPORT_H__
 
 #include <rtconfig.h>
-#if !defined(__ASSEMBLY__)
-#if defined(SOC_RISCV_FAMILY_CH32)
-#include "interrupt.h"
-#endif
-#endif
 
 #ifndef __ASSEMBLY__
 #ifdef RT_USING_SMP
@@ -32,6 +28,17 @@ typedef union {
 #endif
 #endif
 
+/* Preprocessor Definition */
+#if __riscv_flen == 32
+#define ARCH_RISCV_FPU
+#define ARCH_RISCV_FPU_S
+#endif
+
+#if __riscv_flen == 64
+#define ARCH_RISCV_FPU
+#define ARCH_RISCV_FPU_D
+#endif
+
 /* bytes of register width  */
 #ifdef ARCH_CPU_64BIT
 #define STORE                   sd
@@ -43,6 +50,7 @@ typedef union {
 #define REGBYTES                4
 #endif
 
+/* Preprocessor Definition */
 #ifdef ARCH_RISCV_FPU
 #ifdef ARCH_RISCV_FPU_D
 #define FSTORE                  fsd

@@ -14,23 +14,24 @@
  * FilePath: fxmac_bd.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for buffer descriptor (BD) management API.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
-#ifndef DRIVERS_ETH_F_XMAC_BD_H
-#define DRIVERS_ETH_F_XMAC_BD_H
+#ifndef FXMAC_BD_H
+#define FXMAC_BD_H
+
+#include "ftypes.h"
+#include "string.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "ftypes.h"
-#include "string.h"
 
 
 /**
@@ -64,7 +65,7 @@ extern "C"
  */
 #define FXMAC_BD_SET_STATUS(bd_ptr, data)           \
     FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_STAT_OFFSET, \
-                 FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) | (data))
+                   FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) | (data))
 
 
 /**
@@ -75,8 +76,8 @@ extern "C"
 #define FXMAC_BD_IS_RX_NEW(bd_ptr)                      \
     ((FXMAC_BD_READ((bd_ptr), FXMAC_BD_ADDR_OFFSET) & \
       FXMAC_RXBUF_NEW_MASK) != 0U                   \
-         ? TRUE                                     \
-         : FALSE)
+     ? TRUE                                     \
+     : FALSE)
 
 
 /**
@@ -88,8 +89,8 @@ extern "C"
 #define FXMAC_BD_IS_TX_WRAP(bd_ptr)                     \
     ((FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
       FXMAC_TXBUF_WRAP_MASK) != 0U                        \
-         ? TRUE                                           \
-         : FALSE)
+     ? TRUE                                           \
+     : FALSE)
 
 
 /**
@@ -101,8 +102,8 @@ extern "C"
 #define FXMAC_BD_IS_RX_WRAP(bd_ptr)                     \
     ((FXMAC_BD_READ((bd_ptr), FXMAC_BD_ADDR_OFFSET) & \
       FXMAC_RXBUF_WRAP_MASK) != 0U                        \
-         ? TRUE                                           \
-         : FALSE)
+     ? TRUE                                           \
+     : FALSE)
 
 
 
@@ -115,9 +116,9 @@ extern "C"
 #if defined(__aarch64__) || defined(__arch64__)
 #define FXMAC_BD_SET_ADDRESS_TX(bd_ptr, addr)           \
     FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_ADDR_OFFSET,    \
-                 (u32)((addr)&ULONG64_LO_MASK));          \
+                   (u32)((addr)&ULONG64_LO_MASK));          \
     FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_ADDR_HI_OFFSET, \
-                 (u32)(((addr)&ULONG64_HI_MASK) >> 32U));
+                   (u32)(((addr)&ULONG64_HI_MASK) >> 32U));
 #else
 #define FXMAC_BD_SET_ADDRESS_TX(bd_ptr, addr) \
     FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_ADDR_OFFSET, (u32)(addr))
@@ -134,17 +135,17 @@ extern "C"
 #ifdef __aarch64__
 #define FXMAC_BD_SET_ADDRESS_RX(bd_ptr, addr)                        \
     FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_ADDR_OFFSET,                 \
-                 ((FXMAC_BD_READ((bd_ptr), FXMAC_BD_ADDR_OFFSET) & \
-                   ~FXMAC_RXBUF_ADD_MASK) |                            \
-                  ((u32)((addr)&ULONG64_LO_MASK))));                   \
+                   ((FXMAC_BD_READ((bd_ptr), FXMAC_BD_ADDR_OFFSET) & \
+                     ~FXMAC_RXBUF_ADD_MASK) |                            \
+                    ((u32)((addr)&ULONG64_LO_MASK))));                   \
     FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_ADDR_HI_OFFSET,              \
-                 (u32)(((addr)&ULONG64_HI_MASK) >> 32U));
+                   (u32)(((addr)&ULONG64_HI_MASK) >> 32U));
 #else
 #define FXMAC_BD_SET_ADDRESS_RX(bd_ptr, addr)                        \
     FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_ADDR_OFFSET,                 \
-                 ((FXMAC_BD_READ((bd_ptr), FXMAC_BD_ADDR_OFFSET) & \
-                   ~FXMAC_RXBUF_ADD_MASK) |                            \
-                  (u32)(addr)))
+                   ((FXMAC_BD_READ((bd_ptr), FXMAC_BD_ADDR_OFFSET) & \
+                     ~FXMAC_RXBUF_ADD_MASK) |                            \
+                    (u32)(addr)))
 #endif
 
 
@@ -158,9 +159,9 @@ extern "C"
  */
 #define FXMAC_BD_SET_LENGTH(bd_ptr, len_bytes)                      \
     FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_STAT_OFFSET,                 \
-                 ((FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
-                   ~FXMAC_TXBUF_LEN_MASK) |                            \
-                  (len_bytes)))
+                   ((FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
+                     ~FXMAC_TXBUF_LEN_MASK) |                            \
+                    (len_bytes)))
 
 
 /**
@@ -174,12 +175,15 @@ extern "C"
     (FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
      FXMAC_RXBUF_LEN_MASK)
 
+#define FXMAC_BD_GET_TX_LENGTH(bd_ptr)                   \
+    (FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
+     FXMAC_TXBUF_LEN_MASK)
+
 
 /**
  * @name: FXMAC_GET_RX_FRAME_SIZE
  * @msg:  The returned value is the size of the received packet.
  * This API supports jumbo frame sizes if enabled.
- * @param  instance_p is the pointer to xmac instance
  * @param  bd_ptr is the BD pointer to operate on
  *
  * @return Length field processed by hardware or set by
@@ -188,9 +192,9 @@ extern "C"
 
 #define FXMAC_BD_JUMBO_LENGTH_MASK
 
-#define FXMAC_GET_RX_FRAME_SIZE(instance_p, bd_ptr)                   \
+#define FXMAC_GET_RX_FRAME_SIZE(bd_ptr)                   \
     (FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) &            \
-    0x00003FFFU)
+     0x00003FFFU)
 
 
 
@@ -204,13 +208,13 @@ extern "C"
  */
 #define FXMAC_BD_CLEAR_TX_USED(bd_ptr)                              \
     (FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_STAT_OFFSET,               \
-                  FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
-                      (~FXMAC_TXBUF_USED_MASK)))
+                    FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
+                    (~FXMAC_TXBUF_USED_MASK)))
 
 #define FXMAC_BD_SET_CRC(bd_ptr)                                   \
     (FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_STAT_OFFSET,               \
-                  FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
-                      (~FXMAC_TXBUF_NOCRC_MASK)))
+                    FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
+                    (~FXMAC_TXBUF_NOCRC_MASK)))
 
 
 /**
@@ -222,8 +226,8 @@ extern "C"
  */
 #define FXMAC_BD_SET_LAST(bd_ptr)                                  \
     (FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_STAT_OFFSET,               \
-                  FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) | \
-                      FXMAC_TXBUF_LAST_MASK))
+                    FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) | \
+                    FXMAC_TXBUF_LAST_MASK))
 
 
 /**
@@ -235,8 +239,8 @@ extern "C"
  */
 #define FXMAC_BD_CLEAR_LAST(bd_ptr)                                 \
     (FXMAC_BD_WRITE((bd_ptr), FXMAC_BD_STAT_OFFSET,             \
-    FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) &             \
-    ~FXMAC_TXBUF_LAST_MASK))
+                    FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) &             \
+                    ~FXMAC_TXBUF_LAST_MASK))
 
 /**
  * @name: FXMAC_BD_CLEAR

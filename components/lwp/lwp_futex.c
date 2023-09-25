@@ -124,7 +124,12 @@ int futex_wait(struct rt_futex *futex, int value, const struct timespec *timeout
         /* with timeout */
         if (timeout)
         {
-            rt_int32_t time = rt_timespec_to_tick(timeout);
+            rt_int32_t time = timeout->tv_sec * RT_TICK_PER_SECOND + timeout->tv_nsec * RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND;
+
+            if (time < 0)
+            {
+                time = 0;
+            }
 
             /* start the timer of thread */
             rt_timer_control(&(thread->thread_timer),
@@ -174,7 +179,9 @@ void futex_wake(struct rt_futex *futex, int number)
     rt_schedule();
 }
 
-int sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
+#include <syscall_generic.h>
+
+sysret_t sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
               int *uaddr2, int val3)
 {
     struct rt_lwp *lwp = RT_NULL;

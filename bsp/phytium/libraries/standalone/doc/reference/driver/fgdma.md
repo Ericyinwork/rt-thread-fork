@@ -45,12 +45,13 @@ fgdma
 typedef struct
 {
     u32 instance_id;               /* GDMA控制器ID */
-    u32 irq_num;                   /* GDMA控制器中断号 */
+    u32 irq_num[FGDMA_NUM_OF_CHAN];   /* GDMA控制器中断号 */
     u32 irq_prority;               /* GDMA控制器中断优先级 */
     volatile uintptr_t base_addr;  /* GDMA控制器基地址 */
     FGdmaOperPriority rd_qos;      /* 读操作优先级 */
     FGdmaOperPriority wr_qos;      /* 写操作优先级 */
-} FGdmaConfig;
+    u32 caps;                       /* driver capacity */
+} FGdmaConfig; /* GDMA控制器配置 */
 ```
 
 #### FGdmaChanConfig
@@ -65,8 +66,8 @@ typedef struct
     FGdmaOperPriority   wr_qos;  /* DMA通道写Qos配置 */
     FGdmaOperMode       trans_mode; /* DMA通道的操作模式，直接模式或者BDL模式 */
     /* Direct模式有效 */
-    FGdmaBurstSize      rd_align; /* DMA读请求的Burst对齐方式 */
-    FGdmaBurstSize      wr_align; /* DMA写请求的Burst对齐方式 */    
+    FGdmaBurstSize      rd_size; /* DMA读请求的burst size */
+    FGdmaBurstSize      wr_size; /* DMA写请求的burst size */    
     /* BDL模式有效 */
     boolean             roll_back; /* 循环模式，TRUE: 当前BDL列表完成后，从第一个BDL项从新开始传输 */ 
     FGdmaBdlDesc        *descs;
@@ -125,6 +126,16 @@ typedef struct
     u32 ioc;        /* 0x1c, 该条目传输完成中断产生控制位  */
 } __attribute__((__packed__)) FGdmaBdlDesc; /* BDL描述符 */
 ```
+
+```c
+/* gdma capacity mask  */
+
+#define FGDMA_IRQ1_MASK BIT(0)   /* All Gdma channel share a single interrupt */
+#define FGDMA_IRQ2_MASK BIT(1)   /* Each gdma channel owns an independent interrupt */
+#define FGDMA_TRANS_NEED_RESET_MASK BIT(2) /* Gdma needs to be reset before transmission */
+
+```
+
 
 ### 5.2  错误码定义
 
@@ -338,7 +349,26 @@ void FGdmaIrqHandler(s32 vector, void *args)
 
 Note:
 
-- GDMA中断处理函数
+- 当 FGdmaConfig.caps 为FGDMA_IRQ1_MASK 特性时，各通道统一上报至一个中断，选择使用此函数作为中断处理函数
+
+Input:
+
+- {s32} vector, 中断号
+- {void} *args, 中断参数
+
+Return:
+
+- 无
+
+
+#### FGdmaIrqHandlerPrivateChannel
+```c
+void FGdmaIrqHandlerPrivateChannel(s32 vector, void *args)
+```
+
+Note:
+
+- 当 FGdmaConfig.caps 为FGDMA_IRQ2_MASK 特性时，各通道独立上报中断，选择使用此函数作为中断处理函数
 
 Input:
 

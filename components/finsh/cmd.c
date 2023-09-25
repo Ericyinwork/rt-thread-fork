@@ -159,18 +159,25 @@ long list_thread(void)
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
     const char *item_title = "thread";
+    const size_t tcb_strlen = sizeof(void *) * 2 + 2;
     int maxlen;
 
     list_find_init(&find_arg, RT_Object_Class_Thread, obj_list, sizeof(obj_list) / sizeof(obj_list[0]));
 
     maxlen = RT_NAME_MAX;
 
+    rt_kprintf("%-*.*s ", tcb_strlen, tcb_strlen, "rt_thread_t");
+
 #ifdef RT_USING_SMP
     rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick  error\n", maxlen, maxlen, item_title);
+    object_split(tcb_strlen);
+    rt_kprintf(" ");
     object_split(maxlen);
     rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- ---\n");
 #else
     rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick  error\n", maxlen, maxlen, item_title);
+    object_split(tcb_strlen);
+    rt_kprintf(" ");
     object_split(maxlen);
     rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- ---\n");
 #endif /*RT_USING_SMP*/
@@ -202,14 +209,15 @@ long list_thread(void)
                     rt_uint8_t stat;
                     rt_uint8_t *ptr;
 
+                    rt_kprintf("%p ", thread);
 #ifdef RT_USING_SMP
                     if (thread->oncpu != RT_CPU_DETACHED)
-                        rt_kprintf("%-*.*s %3d %3d %4d ", maxlen, RT_NAME_MAX, thread->name, thread->oncpu, thread->bind_cpu, thread->current_priority);
+                        rt_kprintf("%-*.*s %3d %3d %4d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->oncpu, thread->bind_cpu, thread->current_priority);
                     else
-                        rt_kprintf("%-*.*s N/A %3d %4d ", maxlen, RT_NAME_MAX, thread->name, thread->bind_cpu, thread->current_priority);
+                        rt_kprintf("%-*.*s N/A %3d %4d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->bind_cpu, thread->current_priority);
 
 #else
-                    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
+                    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->current_priority);
 #endif /*RT_USING_SMP*/
                     stat = (thread->stat & RT_THREAD_STAT_MASK);
                     if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
@@ -256,7 +264,7 @@ static void show_wait_queue(struct rt_list_node *list)
     for (node = list->next; node != list; node = node->next)
     {
         thread = rt_list_entry(node, struct rt_thread, tlist);
-        rt_kprintf("%.*s", RT_NAME_MAX, thread->name);
+        rt_kprintf("%.*s", RT_NAME_MAX, thread->parent.name);
 
         if (node->next != list)
             rt_kprintf("/");
@@ -439,7 +447,7 @@ long list_mutex(void)
                            maxlen, RT_NAME_MAX,
                            m->parent.parent.name,
                            RT_NAME_MAX,
-                           m->owner->name,
+                           m->owner->parent.name,
                            m->hold,
                            m->priority,
                            rt_list_len(&m->parent.suspend_thread));
@@ -452,7 +460,7 @@ long list_mutex(void)
                            maxlen, RT_NAME_MAX,
                            m->parent.parent.name,
                            RT_NAME_MAX,
-                           m->owner->name,
+                           m->owner->parent.name,
                            m->hold,
                            m->priority,
                            rt_list_len(&m->parent.suspend_thread));
@@ -832,6 +840,7 @@ static char *const device_type_str[RT_Device_Class_Unknown] =
     "DAC Device",
     "WDT Device",
     "PWM Device",
+    "Bus Device",
 };
 
 long list_device(void)

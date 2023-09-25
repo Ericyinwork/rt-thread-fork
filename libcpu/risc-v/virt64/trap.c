@@ -152,6 +152,7 @@ static const char *get_exception_msg(int id)
 void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
 {
     rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
+    struct rt_lwp *lwp;
 
     /* user page fault */
     enum rt_mm_fault_op fault_op;
@@ -200,13 +201,14 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     if (fault_op)
     {
-        struct rt_mm_fault_msg msg = {
+        lwp = lwp_self();
+        struct rt_aspace_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
-            .vaddr = (void *)stval,
+            .fault_vaddr = (void *)stval,
         };
 
-        if (rt_mm_fault_try_fix(&msg))
+        if (lwp && rt_aspace_fault_try_fix(lwp->aspace, &msg))
         {
             return;
         }
@@ -217,10 +219,10 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
 
-    LOG_E("User Fault, killing thread: %s", rt_thread_self()->name);
+    LOG_E("User Fault, killing thread: %s", rt_thread_self()->parent.name);
 
     EXIT_TRAP;
-    sys_exit(-1);
+    sys_exit_group(-1);
 }
 #endif
 
@@ -274,6 +276,9 @@ static void handle_nested_trap_panic(
     rt_hw_cpu_shutdown();
 }
 
+#define IN_USER_SPACE (stval >= USER_VADDR_START && stval < USER_VADDR_TOP)
+#define PAGE_FAULT (id == EP_LOAD_PAGE_FAULT || id == EP_STORE_PAGE_FAULT)
+
 /* Trap entry */
 void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
 {
@@ -326,7 +331,7 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             }
 #endif /* ENABLE_VECTOR */
 #ifdef RT_USING_SMART
-            if (!(sp->sstatus & 0x100))
+            if (!(sp->sstatus & 0x100) || (PAGE_FAULT && IN_USER_SPACE))
             {
                 handle_user(scause, stval, sepc, sp);
                 // if handle_user() return here, jump to u mode then
@@ -341,7 +346,7 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
         rt_kprintf("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
         dump_regs(sp);
         rt_kprintf("--------------Thread list--------------\n");
-        rt_kprintf("current thread: %s\n", rt_thread_self()->name);
+        rt_kprintf("current thread: %s\n", rt_thread_self()->parent.name);
 
         extern struct rt_thread *rt_current_thread;
         rt_kprintf("--------------Backtrace--------------\n");

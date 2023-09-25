@@ -14,27 +14,27 @@
  * FilePath: fgdma_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:52
- * Description:  This files is for
+ * Description:  This file is for gdma register related defintion
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   huanghe    2021-11-5    init commit
- * 1.1   zhugengyu  2022-5-16    modify according to tech manual.
+ * 1.0   huanghe    2021/11/5    init commit
+ * 1.1   zhugengyu  2022/5/16    modify according to tech manual.
  */
 
-#ifndef DRIVERS_FGDMA_HW_H
-#define DRIVERS_FGDMA_HW_H
+#ifndef FGDMA_HW_H
+#define FGDMA_HW_H
+
+#include "fparameters.h"
+#include "fio.h"
+#include "fkernel.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 /***************************** Include Files *********************************/
-
-#include "fparameters.h"
-#include "fio.h"
-#include "fkernel.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -164,21 +164,21 @@ extern "C"
 
 /** @name FGDMA_CHX_XFER_CFG_OFFSET Register
  */
-#define FGDMA_CHX_XFER_CFG_AR_LEN_SET(len)      SET_REG32_BITS((len), 31, 24) /* CHX 读请求Burst length 大小 */
-#define FGDMA_CHX_XFER_CFG_AR_SIZE_SET(size)    SET_REG32_BITS((size), 22, 20) /* CHX 读请求Size 大小 ， 支持 1、2、8、16 Byte */
-#define FGDMA_CHX_XFER_CFG_AR_BRUST_SET(type)   SET_REG32_BITS((type), 17, 16) /* CHX 读请求Brust 类型： 0：fix ，1：incr */
-#define FGDMA_CHX_XFER_CFG_AW_LEN_SET(len)      SET_REG32_BITS((len), 15, 8) /* CHX 写请求Burst length 大小 */
-#define FGDMA_CHX_XFER_CFG_AW_SIZE_SET(size)    SET_REG32_BITS((size), 6, 4) /* CHX 写请求Size 大小 ， 支持 1、2、8、16 Byte */
-#define FGDMA_CHX_XFER_CFG_AW_BRUST_SET(type)   SET_REG32_BITS((type), 1, 0) /* CHX 写请求Brust 类型： 0：fix ，1：incr */
+#define FGDMA_CHX_XFER_CFG_AR_LEN_SET(len)      SET_REG32_BITS((len), 31, 24) /* CHX 读请求 Burst length 大小 */
+#define FGDMA_CHX_XFER_CFG_AR_SIZE_SET(size)    SET_REG32_BITS((size), 22, 20) /* CHX 读请求 Burst size 大小， 支持 1、2、8、16 Byte */
+#define FGDMA_CHX_XFER_CFG_AR_BRUST_SET(type)   SET_REG32_BITS((type), 17, 16) /* CHX 读请求 Brust 类型： 0：fix ，1：incr */
+#define FGDMA_CHX_XFER_CFG_AW_LEN_SET(len)      SET_REG32_BITS((len), 15, 8) /* CHX 写请求 Burst length 大小 */
+#define FGDMA_CHX_XFER_CFG_AW_SIZE_SET(size)    SET_REG32_BITS((size), 6, 4) /* CHX 写请求 Burst size 大小， 支持 1、2、8、16 Byte */
+#define FGDMA_CHX_XFER_CFG_AW_BRUST_SET(type)   SET_REG32_BITS((type), 1, 0) /* CHX 写请求 Brust 类型： 0：fix ，1：incr */
 
 #define FGDMA_INCR                      1U
 #define FGDMA_FIX                       0U
 
-#define FGDMA_MAX_BURST_LEN             8U
+#define FGDMA_BURST_LEN                 7U /* burst lenth = FGDMA_BURST_LEN + 1，写入寄存器的最大合法值为7，burst length最大值为8 */
 
 /** @name FGDMA_CHX_LCP_OFFSET Register
  */
-#define FGDMA_CHX_LCP_GET(reg_val)   GET_REG32_BITS((reg_val), 31, 0) /* 当前操作了多少个 BDL 列表 */
+#define FGDMA_CHX_LCP_GET(reg_val)   GET_REG32_BITS((reg_val), 31, 0) /* 当前操作的BDL列表数  */
 
 /** @name FGDMA_CHX_SECCTL_OFFSET Register
  */
@@ -429,9 +429,13 @@ static inline void FGdmaSetChanClock(uintptr base_addr, u32 chan, boolean enable
 {
     u32 reg_val = FGDMA_READREG(base_addr, FGDMA_LP_OFFSET);
     if (enable)
-        reg_val &= ~FGDMA_CHX_LP_CTL(chan); /* 写0开启通道时钟 */
+    {
+        reg_val &= ~FGDMA_CHX_LP_CTL(chan);    /* 写0开启通道时钟 */
+    }
     else
-        reg_val |= FGDMA_CHX_LP_CTL(chan); /* 写1关断通道时钟 */
+    {
+        reg_val |= FGDMA_CHX_LP_CTL(chan);    /* 写1关断通道时钟 */
+    }
     FGDMA_WRITEREG(base_addr, FGDMA_LP_OFFSET, reg_val);
 
     return;

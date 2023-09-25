@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2006-2022, RT-Thread Development Team
+=======
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+>>>>>>> f84f7f8d463051055a0c08a0ddb0c962f957de24
  *
  * SPDX-License-Identifier: Apache-2.0
  *

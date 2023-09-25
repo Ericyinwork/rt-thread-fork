@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -70,6 +70,7 @@ struct dtb_node
     };
     const char *path;
     phandle handle;
+    int level;
 
     struct dtb_property *properties;
     struct dtb_node *parent;
@@ -201,11 +202,11 @@ int dtb_node_property_read_string_helper(const struct dtb_node *dn,
 /**
  * of_property_read_string_index() - Find and read a string from a multiple
  * strings property.
- * @np:		device node from which the property value is to be read.
- * @propname:	name of the property to be searched.
- * @index:	index of the string in the list of strings
- * @out_string:	pointer to null terminated return string, modified only if
- *		return value is 0.
+ * @np:     device node from which the property value is to be read.
+ * @propname:   name of the property to be searched.
+ * @index:  index of the string in the list of strings
+ * @out_string: pointer to null terminated return string, modified only if
+ *      return value is 0.
  *
  * Search for a property in a device tree node and retrieve a null
  * terminated string value (pointer to data, not a copy) in the list of strings
@@ -227,8 +228,8 @@ static inline int dtb_node_property_read_string_index(const struct dtb_node *dn,
 /**
  * of_property_count_strings() - Find and return the number of strings from a
  * multiple strings property.
- * @np:		device node from which the property value is to be read.
- * @propname:	name of the property to be searched.
+ * @np:     device node from which the property value is to be read.
+ * @propname:   name of the property to be searched.
  *
  * Search for a property in a device tree node and retrieve the number of null
  * terminated string contain in it. Returns the number of strings on
@@ -288,6 +289,9 @@ const uint32_t *dtb_node_get_address(const struct dtb_node *dev, int index,
 #define for_each_of_allnodes_from(from, dn) \
     for (dn = dtb_node_find_all_nodes(from); dn; dn = dtb_node_find_all_nodes(dn))
 
+#define for_each_of_all_child_nodes_from(from, dn) \
+    for (dn = dtb_node_find_all_nodes(from); dn && (dn->level > from->level); dn = dtb_node_find_all_nodes(dn))
+
 #define for_each_of_allnodes(dn) for_each_of_allnodes_from(NULL, dn)
 
 #define dtb_node_get(x) (x)
@@ -329,6 +333,7 @@ struct dtb_node *dtb_node_get_parent(const struct dtb_node *node);
 const char *dtb_node_get_name(const struct dtb_node *node);
 struct dtb_node *dtb_node_get_by_phandle(uint32_t phandle);
 int dtb_node_read_size(const struct dtb_node *node, const char *propname);
+int dtb_node_get_addr_and_size_by_index(const struct dtb_node *node, int index, size_t *addr, size_t *size);
 size_t dtb_node_get_addr_index(const struct dtb_node *node, int index);
 size_t dtb_node_get_addr(const struct dtb_node *node);
 int dtb_node_stringlist_search(const struct dtb_node *node, const char *property,

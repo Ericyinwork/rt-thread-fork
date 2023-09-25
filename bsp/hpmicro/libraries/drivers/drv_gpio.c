@@ -1,12 +1,14 @@
 /*
- * Copyright (c) 2021 hpm
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  * Change Logs:
  * Date         Author      Notes
- * 2022-01-11   hpmicro     First version
- * 2022-07-28   hpmicro     Fixed compiling warnings
+ * 2022-01-11   HPMicro     First version
+ * 2022-07-28   HPMicro     Fixed compiling warnings
+ * 2023-05-08   HPMicro     Adapt RT-Thread V5.0.0
+ * 2023-08-15   HPMicro     Enable pad loopback feature
  */
 
 #include <rtthread.h>
@@ -19,6 +21,7 @@
 #include "hpm_gpio_drv.h"
 #include "hpm_gpiom_drv.h"
 #include "hpm_clock_drv.h"
+#include "hpm_soc_feature.h"
 
 typedef struct
 {
@@ -56,7 +59,7 @@ static const gpio_irq_map_t hpm_gpio_irq_map[] = {
 #endif
         };
 
-static struct rt_pin_irq_hdr hpm_gpio_pin_hdr_tbl[IOC_PAD_PZ11];
+static struct rt_pin_irq_hdr hpm_gpio_pin_hdr_tbl[IOC_SOC_PAD_MAX];
 
 static int hpm_get_gpi_irq_num(uint32_t gpio_idx)
 {
@@ -163,7 +166,7 @@ SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_Z, gpioz_isr)
 #endif
 
 
-static void hpm_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void hpm_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     /* TODO: Check the validity of the pin value */
     uint32_t gpio_idx = pin >> 5;
@@ -211,9 +214,10 @@ static void hpm_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         /* Invalid mode */
         break;
     }
+    HPM_IOC->PAD[pin].FUNC_CTL = IOC_PAD_FUNC_CTL_LOOP_BACK_MASK;
 }
 
-static int hpm_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t hpm_pin_read(rt_device_t dev, rt_base_t pin)
 {
     /* TODO: Check the validity of the pin value */
     uint32_t gpio_idx = pin >> 5;
@@ -222,7 +226,7 @@ static int hpm_pin_read(rt_device_t dev, rt_base_t pin)
     return (int) gpio_read_pin(HPM_GPIO0, gpio_idx, pin_idx);
 }
 
-static void hpm_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void hpm_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     /* TODO: Check the validity of the pin value */
     uint32_t gpio_idx = pin >> 5;
@@ -231,8 +235,11 @@ static void hpm_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     gpio_write_pin(HPM_GPIO0, gpio_idx, pin_idx, value);
 }
 
-static rt_err_t hpm_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode,
-        void (*hdr)(void *args), void *args)
+static rt_err_t hpm_pin_attach_irq(struct rt_device *device,
+                                   rt_base_t pin,
+                                   rt_uint8_t mode,
+                                   void (*hdr)(void *args),
+                                   void *args)
 {
 
     rt_base_t level;
@@ -246,7 +253,7 @@ static rt_err_t hpm_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_
     return RT_EOK;
 }
 
-static rt_err_t hpm_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t hpm_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
@@ -259,7 +266,7 @@ static rt_err_t hpm_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t hpm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t hpm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     /* TODO: Check the validity of the pin value */
     uint32_t gpio_idx = pin >> 5;

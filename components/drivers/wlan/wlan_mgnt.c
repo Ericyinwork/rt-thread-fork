@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -842,7 +842,6 @@ static void rt_wlan_join_scan_callback(int event, struct rt_wlan_buff *buff, voi
 {
     struct rt_wlan_info *info = RT_NULL;
     struct rt_wlan_info *tgt_info = RT_NULL;
-    int ret = RT_EOK;
 
     RT_ASSERT(event == RT_WLAN_EVT_SCAN_REPORT);
     RT_ASSERT(buff != RT_NULL);
@@ -880,7 +879,6 @@ rt_err_t rt_wlan_connect(const char *ssid, const char *password)
     struct rt_wlan_info info;
     struct rt_wlan_complete_des *complete;
     rt_uint32_t set = 0, recved = 0;
-    rt_uint32_t scan_retry = RT_WLAN_SCAN_RETRY_CNT;
 
     /* sta dev Can't be NULL */
     if (_sta_is_null())
@@ -1584,7 +1582,6 @@ rt_err_t rt_wlan_scan_with_info(struct rt_wlan_info *info)
     rt_err_t err = RT_EOK;
     struct rt_wlan_complete_des *complete;
     rt_uint32_t set = 0, recved = 0;
-    static struct rt_wlan_info scan_filter_info;
 
     if (_sta_is_null())
     {
@@ -1670,7 +1667,7 @@ rt_err_t rt_wlan_register_event_handler(rt_wlan_event_t event, rt_wlan_event_han
 
     if (event >= RT_WLAN_EVT_MAX)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     RT_WLAN_LOG_D("%s is run event:%d", __FUNCTION__, event);
 
@@ -1690,7 +1687,7 @@ rt_err_t rt_wlan_unregister_event_handler(rt_wlan_event_t event)
 
     if (event >= RT_WLAN_EVT_MAX)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     RT_WLAN_LOG_D("%s is run event:%d", __FUNCTION__, event);
     MGNT_LOCK();

@@ -19,15 +19,17 @@
 
 #define PIN_IFXPORT_MAX     __IFX_PORT_MAX
 
+static cyhal_gpio_callback_data_t irq_cb_data[PIN_IFXPORT_MAX];
+
 static const struct pin_irq_map pin_irq_map[] =
 {
     {CYHAL_PORT_0,  ioss_interrupts_gpio_0_IRQn},
-#ifndef SOC_CY8C6245LQI_S3D72
+#if !defined(SOC_CY8C6245LQI_S3D72) && !defined(SOC_CY8C6244LQI_S4D92)
     {CYHAL_PORT_1,  ioss_interrupts_gpio_1_IRQn},
 #endif
     {CYHAL_PORT_2,  ioss_interrupts_gpio_2_IRQn},
     {CYHAL_PORT_3,  ioss_interrupts_gpio_3_IRQn},
-#ifndef SOC_CY8C6245LQI_S3D72
+#if !defined(SOC_CY8C6245LQI_S3D72) && !defined(SOC_CY8C6244LQI_S4D92)
     {CYHAL_PORT_4,  ioss_interrupts_gpio_4_IRQn},
 #endif
     {CYHAL_PORT_5,  ioss_interrupts_gpio_5_IRQn},
@@ -38,7 +40,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {CYHAL_PORT_10,  ioss_interrupts_gpio_10_IRQn},
     {CYHAL_PORT_11,  ioss_interrupts_gpio_11_IRQn},
     {CYHAL_PORT_12,  ioss_interrupts_gpio_12_IRQn},
-#ifndef SOC_CY8C6245LQI_S3D72
+#if !defined(SOC_CY8C6245LQI_S3D72) && !defined(SOC_CY8C6244LQI_S4D92)
     {CYHAL_PORT_13,  ioss_interrupts_gpio_13_IRQn},
 #endif
     {CYHAL_PORT_14,  ioss_interrupts_gpio_14_IRQn},
@@ -66,6 +68,8 @@ static struct rt_pin_irq_hdr pin_irq_handler_tab[] =
 
 rt_inline void pin_irq_handler(int irqno)
 {
+    Cy_GPIO_ClearInterrupt(CYHAL_GET_PORTADDR(irqno), CYHAL_GET_PIN(irqno));
+
     if (pin_irq_handler_tab[irqno].hdr)
     {
         pin_irq_handler_tab[irqno].hdr(pin_irq_handler_tab[irqno].args);
@@ -93,9 +97,7 @@ static void irq_callback(void *callback_arg, cyhal_gpio_event_t event)
     rt_interrupt_leave();
 }
 
-cyhal_gpio_callback_data_t irq_cb_data;
-
-static void ifx_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void ifx_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     rt_uint16_t gpio_pin;
 
@@ -132,7 +134,7 @@ static void ifx_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static void ifx_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void ifx_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     rt_uint16_t gpio_pin;
 
@@ -148,7 +150,7 @@ static void ifx_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     cyhal_gpio_write(gpio_pin, value);
 }
 
-static int ifx_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t ifx_pin_read(struct rt_device *device, rt_base_t pin)
 {
     rt_uint16_t gpio_pin;
 
@@ -164,8 +166,8 @@ static int ifx_pin_read(rt_device_t dev, rt_base_t pin)
     return cyhal_gpio_read(gpio_pin);
 }
 
-static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                   rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                   rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_uint16_t gpio_port;
     rt_uint16_t gpio_pin;
@@ -195,7 +197,7 @@ static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_handler_tab[gpio_port].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
 
     pin_irq_handler_tab[gpio_port].pin = pin;
@@ -207,7 +209,7 @@ static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t ifx_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t ifx_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_uint16_t gpio_port;
     rt_uint16_t gpio_pin;
@@ -241,13 +243,12 @@ static rt_err_t ifx_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                   rt_uint32_t enabled)
+                                   rt_uint8_t enabled)
 {
     rt_uint16_t gpio_port;
     rt_uint16_t gpio_pin;
     rt_base_t level;
     rt_uint8_t pin_irq_mode;
-
     const struct pin_irq_map *irqmap;
 
     if (PORT_GET(pin) < PIN_IFXPORT_MAX)
@@ -272,10 +273,13 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         irqmap = &pin_irq_map[gpio_port];
 
-        irq_cb_data.callback = irq_callback;
-        irq_cb_data.callback_arg = (rt_uint16_t *)&pin_irq_map[gpio_port].port;
+#if !defined(COMPONENT_CAT1C)
+        IRQn_Type irqn = (IRQn_Type)(irqmap->irqno + PORT_GET(irqmap->port));
+#endif
+        irq_cb_data[irqn].callback = irq_callback;
+        irq_cb_data[irqn].callback_arg = (rt_uint16_t *)&pin_irq_map[gpio_port].port;
 
-        cyhal_gpio_register_callback(gpio_pin, &irq_cb_data);
+        cyhal_gpio_register_callback(gpio_pin, &irq_cb_data[irqn]);
 
         Cy_GPIO_ClearInterrupt(CYHAL_GET_PORTADDR(gpio_pin), CYHAL_GET_PIN(gpio_pin));
 

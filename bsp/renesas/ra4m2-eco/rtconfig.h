@@ -23,8 +23,10 @@
 
 /* kservice optimization */
 
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -46,7 +48,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart4"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50001
+#define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -71,12 +74,16 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+
+/* DFS: device virtual file system */
+
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_V1
 #define DFS_FILESYSTEMS_MAX 4
 #define DFS_FILESYSTEM_TYPES_MAX 4
-#define DFS_FD_MAX 16
 #define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
@@ -150,9 +157,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -200,7 +204,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -224,6 +228,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 
@@ -249,7 +254,7 @@
 #define BSP_USING_UART4
 #define BSP_UART4_RX_BUFSIZE 256
 #define BSP_UART4_TX_BUFSIZE 0
-#define BSP_USING_SPI
+#define BSP_USING_SCI_SPI
 #define BSP_USING_SCI_SPI9
 
 /* Board extended module Drivers */

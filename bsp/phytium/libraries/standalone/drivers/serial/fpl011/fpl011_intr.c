@@ -12,18 +12,19 @@
  *
  *
  * FilePath: fpl011_intr.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-02 14:53:42
  * LastEditTime: 2022-02-18 09:06:30
- * Description:  This files is for uart irq functions
+ * Description:  This file is for uart irq functions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  huanghe 2021/11/2  first commit
+ * 1.1  liushengming 2022/02/18  fix bugs
  */
 
 
 /***************************** Include Files *********************************/
-
 #include "fpl011.h"
 
 /************************** Constant Definitions *****************************/
@@ -79,6 +80,21 @@ void FPl011SetInterruptMask(FPl011 *uart_p, u32 mask)
     temp_mask &= FPL011IMSC_ALLM;
 
     FUART_WRITEREG32(uart_p->config.base_address, FPL011IMSC_OFFSET, temp_mask);
+}
+
+/**
+ * @name: FPl011InterruptClear
+ * @msg:  This function clears all interrupt state.
+ * @param uart_p is a pointer to the uart instance
+ */
+void FPl011InterruptClearAll(FPl011 *uart_p)
+{
+    FASSERT(uart_p != NULL);
+
+    if (FUART_READREG32(uart_p->config.base_address, FPL011RIS_OFFSET))
+    {
+        FUART_WRITEREG32(uart_p->config.base_address, FPL011ICR_OFFSET, 0xFFFFFFFF);
+    }
 }
 
 /**
@@ -187,7 +203,6 @@ static void FPl011ReceiveDataHandler(FPl011 *uart_p)
     {
         (void)FPl011ReceiveBuffer(uart_p);
     }
-
     if ((u32)0 == uart_p->receive_buffer.remaining_bytes)
     {
         if (uart_p->handler)
@@ -205,7 +220,6 @@ static void FPl011ReceiveTimeoutHandler(FPl011 *uart_p)
     {
         (void)FPl011ReceiveBuffer(uart_p);
     }
-
     if ((u32)0 == uart_p->receive_buffer.remaining_bytes)
     {
         event = FPL011_EVENT_RECV_TOUT;

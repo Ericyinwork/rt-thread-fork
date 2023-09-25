@@ -73,18 +73,18 @@ static rt_err_t pl031_rtc_control(rt_device_t dev, int cmd, void *args)
         pl031_write32(RTC_LR, *(time_t *)args);
         break;
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     return RT_EOK;
 }
 
-static rt_size_t pl031_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t pl031_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     pl031_rtc_control(dev, RT_DEVICE_CTRL_RTC_GET_TIME, buffer);
     return size;
 }
 
-static rt_size_t pl031_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t pl031_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     pl031_rtc_control(dev, RT_DEVICE_CTRL_RTC_SET_TIME, (void *)buffer);
     return size;
@@ -115,8 +115,8 @@ int rt_hw_rtc_init(void)
     rtc_device.device.user_data   = RT_NULL;
 
     /* register a rtc device */
-    rt_device_register(&rtc_device.device, "rtc", RT_DEVICE_FLAG_RDWR);
-
+    rt_device_register(&rtc_device.device, "rtc0", RT_DEVICE_FLAG_RDWR);
+    rt_soft_rtc_set_source("rtc0");
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);

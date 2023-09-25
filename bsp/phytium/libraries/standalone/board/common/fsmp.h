@@ -14,11 +14,12 @@
  * FilePath: fsmp.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-17 17:58:18
- * Description:  This files is for
+ * Description:  This file is for spinlock function
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ *  1.0   carl       2023-02-28   Use GCC built-in functions to implement spinlock
  */
 
 
@@ -27,8 +28,19 @@
 
 #include "ftypes.h"
 
-void SpinLockInit(unsigned long  global_addr);
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+void SpinInit(void);
 void SpinLock(void);
 void SpinUnlock(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif // DEBUG

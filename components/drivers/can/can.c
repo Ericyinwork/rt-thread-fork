@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -154,6 +154,7 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
 
         no = ((rt_uint32_t)tx_tosnd - (rt_uint32_t)tx_fifo->buffer) / sizeof(struct rt_can_sndbxinx_list);
         tx_tosnd->result = RT_CAN_SND_RESULT_WAIT;
+        rt_completion_init(&tx_tosnd->completion);
         if (can->ops->sendmsg(can, data, no) != RT_EOK)
         {
             /* send failed. */
@@ -438,7 +439,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_can_read(struct rt_device *dev,
+static rt_ssize_t rt_can_read(struct rt_device *dev,
                              rt_off_t          pos,
                              void             *buffer,
                              rt_size_t         size)
@@ -458,7 +459,7 @@ static rt_size_t rt_can_read(struct rt_device *dev,
     return 0;
 }
 
-static rt_size_t rt_can_write(struct rt_device *dev,
+static rt_ssize_t rt_can_write(struct rt_device *dev,
                               rt_off_t          pos,
                               const void       *buffer,
                               rt_size_t         size)

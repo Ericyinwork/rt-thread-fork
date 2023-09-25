@@ -14,19 +14,25 @@
  * FilePath: fgic_hw.h
  * Date: 2022-03-24 11:44:48
  * LastEditTime: 2022-03-24 11:44:48
- * Description:  This file is for
+ * Description: This file is for gic register definition.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/4/16   init commit
  */
 
-#ifndef DRIVERS_GIC_FGIC_HW_H
-#define DRIVERS_GIC_FGIC_HW_H
+#ifndef FGIC_HW_H
+#define FGIC_HW_H
 
 #include "ftypes.h"
 #include "fio.h"
 #include "fkernel.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /* Distributor */
 #define FGIC_GICD_CTLR_OFFSET 0x00000000U       /* Distributor Control Register ,RW */
@@ -140,8 +146,28 @@
 #define FGIC_READREG32(addr, reg_offset) FtIn32(addr + (u32)reg_offset)
 #define FGIC_WRITEREG32(addr, reg_offset, reg_value) FtOut32(addr + (u32)reg_offset, (u32)reg_value)
 
+#ifdef __aarch64__
+
 #define FGIC_READREG64(addr, reg_offset) FtIn64(addr + (u64)reg_offset)
 #define FGIC_WRITEREG64(addr, reg_offset, reg_value) FtOut64(addr +(u64)reg_offset, (u64)reg_value)
+
+#else
+
+#define FGIC_READREG64(addr, reg_offset)                            \
+({                                                                  \
+        u64 reg_val;                                                \
+        reg_val = FtIn32(addr + (u32)reg_offset + 4);               \
+        reg_val = (reg_val << 32) | FtIn32(addr + (u32)reg_offset); \
+        reg_val;                                                    \
+})
+            
+#define FGIC_WRITEREG64(addr, reg_offset, reg_value)                \
+({                                                                  \
+        FtOut32(addr + (u32)reg_offset, (u32)reg_value);            \
+        FtOut32(addr + (u32)reg_offset + 4, (u32)(((u64)reg_value) >> 32));  \
+})
+
+#endif 
 
 
 #define FGIC_SETBIT(base_addr, reg_offset, data) \
@@ -311,5 +337,9 @@
 
 #define FGIC_GICR_NSACR_WRITE(sgi_base, reg) FGIC_WRITEREG32(sgi_base , FGIC_GICR_NSACR_OFFSET, reg)
 #define FGIC_GICR_NSACR_READ(sgi_base) FGIC_READREG32(sgi_base , FGIC_GICR_NSACR_OFFSET)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

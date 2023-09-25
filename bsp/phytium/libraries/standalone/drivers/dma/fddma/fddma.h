@@ -14,25 +14,25 @@
  * FilePath: fddma.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:52
- * Description:  This files is for ddma interface definition
+ * Description:  This file is for ddma interface definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/5/13    init commit
+ * 1.0   zhugengyu  2022/5/13    init commit
  */
 
-#ifndef  DRIVER_FDDMA_H
-#define  DRIVER_FDDMA_H
+#ifndef  FDDMA_H
+#define  FDDMA_H
+
+#include "ftypes.h"
+#include "ferror_code.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 /***************************** Include Files *********************************/
-
-#include "ftypes.h"
-#include "ferror_code.h"
 
 /************************** Constant Definitions *****************************/
 typedef enum
@@ -94,7 +94,6 @@ typedef struct
     uintptr ddr_addr;           /* DMA channel DDR address, could be source or destination */
     u32 dev_addr;               /* DMA channel Perpherial, could be source or destination */
     u32 trans_len;              /* DMA channel transfer length */
-#define FDDMA_MAX_TRANSFER_LEN      64 /* max bytes in transfer */
 #define FDDMA_MIN_TRANSFER_LEN      4  /* min bytes in transfer */
     u32 timeout;                /* timeout = 0 means no use DMA timeout */
 } FDdmaChanConfig;  /* DDMA channel instance */

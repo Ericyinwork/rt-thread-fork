@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,6 @@
  * 2022-08-22     Emuzit            first version
  */
 #include <rthw.h>
-#include <rtdebug.h>
 #include <drivers/usb_common.h>
 #include <drivers/usb_device.h>
 #include "ch56x_usbhs.h"
@@ -159,7 +158,7 @@ static rt_err_t udc_ep_disable(struct uendpoint *ep)
     return RT_EOK;
 }
 
-static rt_size_t udc_ep_read_prepare(uint8_t address, void *buffer, rt_size_t size)
+static rt_ssize_t udc_ep_read_prepare(uint8_t address, void *buffer, rt_size_t size)
 {
     volatile struct usbhs_registers *usbhs = (void *)USBHS_REG_BASE;
 
@@ -206,7 +205,7 @@ static rt_size_t udc_ep_read_prepare(uint8_t address, void *buffer, rt_size_t si
     return size;
 }
 
-static rt_size_t udc_ep_read(uint8_t address, void *buffer)
+static rt_ssize_t udc_ep_read(uint8_t address, void *buffer)
 {
     volatile struct usbhs_registers *usbhs = (void *)USBHS_REG_BASE;
 
@@ -236,7 +235,7 @@ static rt_size_t udc_ep_read(uint8_t address, void *buffer)
     return size;
 }
 
-static rt_size_t udc_ep_write(uint8_t address, void *buffer, rt_size_t size)
+static rt_ssize_t udc_ep_write(uint8_t address, void *buffer, rt_size_t size)
 {
     volatile struct usbhs_registers *usbhs = (void *)USBHS_REG_BASE;
 

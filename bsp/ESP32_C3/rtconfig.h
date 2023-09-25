@@ -40,7 +40,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50001
 
 /* RT-Thread Components */
 
@@ -62,9 +62,13 @@
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 
+/* DFS: device virtual file system */
+
+
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
@@ -130,9 +134,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -150,9 +151,15 @@
 /* Micrium: Micrium software products porting for RT-Thread */
 
 #define PKG_USING_FREERTOS_WRAPPER
+#define PKG_FREERTOS_USING_CONFIG_H
 #define PKG_USING_FREERTOS_WRAPPER_LATEST_VERSION
 
 /* peripheral libraries and drivers */
+
+/* sensors drivers */
+
+
+/* touch drivers */
 
 #define PKG_USING_ESP_IDF
 #define PKG_USING_ESP_IDF_LATEST_VERSION
@@ -161,6 +168,9 @@
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -176,7 +186,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -195,9 +205,12 @@
 
 /* Communication */
 
+
 /* Device Control */
 
+
 /* Other */
+
 
 /* Signal IO */
 

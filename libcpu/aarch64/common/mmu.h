@@ -74,7 +74,7 @@ struct mem_desc
 struct rt_aspace;
 
 void rt_hw_mmu_ktbl_set(unsigned long tbl);
-void rt_hw_mmu_setup_early(unsigned long *tbl0, unsigned long *tbl1,
+void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
                            unsigned long size, unsigned long pv_off);
 void rt_hw_mmu_setup(struct rt_aspace *aspace, struct mem_desc *mdesc,
                      int desc_nr);
@@ -97,16 +97,25 @@ static inline void *rt_hw_mmu_tbl_get()
     return (void *)(tbl & ((1ul << 48) - 2));
 }
 
-static inline void *_rt_kmem_v2p(void *vaddr)
+static inline void *rt_hw_mmu_kernel_v2p(void *v_addr)
 {
-    return rt_hw_mmu_v2p(&rt_kernel_space, vaddr);
-}
+    rt_ubase_t par;
+    void *paddr;
+    asm volatile("at s1e1w, %0"::"r"(v_addr):"memory");
+    asm volatile("mrs %0, par_el1":"=r"(par)::"memory");
 
-static inline void *rt_kmem_v2p(void *vaddr)
-{
-    MM_PGTBL_LOCK(&rt_kernel_space);
-    void *paddr = _rt_kmem_v2p(vaddr);
-    MM_PGTBL_UNLOCK(&rt_kernel_space);
+    if (par & 0x1)
+    {
+        paddr = ARCH_MAP_FAILED;
+    }
+    else
+    {
+        #define MMU_ADDRESS_MASK 0x0000fffffffff000UL
+        par &= MMU_ADDRESS_MASK;
+        par |= (rt_ubase_t)v_addr & ARCH_PAGE_MASK;
+        paddr =  (void *)par;
+    }
+
     return paddr;
 }
 
