@@ -325,7 +325,6 @@
 #define BSP_I2C2_SCL_PIN 127
 #define BSP_I2C2_SDA_PIN 125
 #define BSP_USING_SDRAM
-#define BSP_USING_USBD
 
 /* External Libraries */
 
