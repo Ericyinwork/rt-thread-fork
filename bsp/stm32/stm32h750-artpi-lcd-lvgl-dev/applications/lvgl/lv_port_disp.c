@@ -193,4 +193,8 @@ void lv_port_disp_init(void)
 
     /*Finally register the driver*/
     lv_disp_drv_register(&disp_drv);
+	
+		// add for rotation
+		disp_drv.sw_rotate = 1;   // add for rotation
+		disp_drv.rotated = LV_DISP_ROT_180;   // add for rotation
 }

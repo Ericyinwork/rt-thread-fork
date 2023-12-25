@@ -14,7 +14,7 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#include "lv_demo_rtt_music.h"
+//#include "lv_demo_rtt_music.h"
 
 #ifndef LV_THREAD_STACK_SIZE
 #define LV_THREAD_STACK_SIZE 4096
@@ -23,14 +23,15 @@
 #ifndef LV_THREAD_PRIO
 #define LV_THREAD_PRIO (RT_THREAD_PRIORITY_MAX * 2 / 3)
 #endif
-
+	extern void gui_guider_setup(void);
 static void lvgl_thread(void *parameter)
 {
   // extern void lv_demo_music1(void);
 	//lv_demo_music();
 	//lv_demo_music1();
-	extern void gui_guider_setup(void);
+
 	gui_guider_setup();
+rt_kprintf("gui_guider_setup is runing\r\n");
 
     /* handle the tasks of LVGL */
 //	  lv_obj_t * obj = lv_obj_create(lv_scr_act());
