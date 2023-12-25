@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <dfs_file.h>
+#include <dfs.h>
 #include "poll.h"
 #include "eventfd.h"
 
@@ -24,7 +25,7 @@
 #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
 #define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
 
-#define ULLONG_MAX  (~0ULL)
+#define EFD_ULLONG_MAX  (~0ULL)
 
 #define EVENTFD_MUTEX_NAME "eventfd"
 
@@ -83,10 +84,10 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
     if (count > 0)
         events |= POLLIN;
 
-    if (count == ULLONG_MAX)
+    if (count == EFD_ULLONG_MAX)
         events |= POLLERR;
 
-    if ((ULLONG_MAX - 1) > count)
+    if ((EFD_ULLONG_MAX - 1) > count)
         events |= POLLOUT;
 
     return events;
@@ -160,14 +161,14 @@ static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t coun
 
     counter_num = *(rt_uint64_t *)buf;
 
-    if (counter_num == ULLONG_MAX)
+    if (counter_num == EFD_ULLONG_MAX)
         return -EINVAL;
 
     ret = -EAGAIN;
 
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
 
-    if ((ULLONG_MAX - ctx->count) > counter_num)
+    if ((EFD_ULLONG_MAX - ctx->count) > counter_num)
     {
         ret = sizeof(counter_num);
     }
@@ -175,7 +176,7 @@ static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t coun
     {
         for (;;)
         {
-            if ((ULLONG_MAX - ctx->count) >= counter_num)
+            if ((EFD_ULLONG_MAX - ctx->count) >= counter_num)
             {
                 ret = sizeof(counter_num);
                 break;

@@ -8,9 +8,9 @@
  * 2022-08-25     GuEe-GUI     first version
  */
 
+
 #include <rtthread.h>
 
-#include <string.h>
 #include <drivers/ofw.h>
 #include <drivers/ofw_io.h>
 #include <drivers/ofw_fdt.h>

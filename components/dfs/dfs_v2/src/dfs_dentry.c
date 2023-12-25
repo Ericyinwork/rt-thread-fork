@@ -131,6 +131,7 @@ struct dfs_dentry *dfs_dentry_unref(struct dfs_dentry *dentry)
                 LOG_I("free a dentry: %p", dentry);
                 rt_free(dentry->pathname);
                 rt_free(dentry);
+                dentry = RT_NULL;
             }
             else
             {
@@ -197,7 +198,7 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
             path = "/";
         }
     }
-
+    dfs_file_lock();
     dentry = _dentry_hash_lookup(mnt, path);
     if (!dentry)
     {
@@ -252,7 +253,7 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
     {
         DLOG(note, "dentry", "found dentry");
     }
-
+    dfs_file_unlock();
     return dentry;
 }
 
@@ -268,7 +269,7 @@ char* dfs_dentry_full_path(struct dfs_dentry* dentry)
         path = (char *) rt_malloc(mnt_len + path_len + 3);
         if (path)
         {
-            if (dentry->pathname[0] == '/')
+            if (dentry->pathname[0] == '/' || dentry->mnt->fullpath[mnt_len - 1] == '/')
             {
                 rt_snprintf(path, mnt_len + path_len + 2, "%s%s", dentry->mnt->fullpath,
                     dentry->pathname);

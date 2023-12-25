@@ -29,7 +29,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#define DBG_TAG           "kernel.device"
+#define DBG_TAG           "kernel.service"
 #ifdef RT_DEBUG_DEVICE
 #define DBG_LVL           DBG_LOG
 #else
@@ -91,6 +91,18 @@ rt_weak void rt_hw_cpu_shutdown(void)
     return;
 }
 
+rt_weak rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
+{
+    LOG_W("%s is not implemented", __func__);
+    return -RT_ENOSYS;
+}
+
+rt_weak rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
+{
+    LOG_W("%s is not implemented", __func__);
+    return -RT_ENOSYS;
+}
+
 rt_weak const char *rt_hw_cpu_arch(void)
 {
     return "unknown";
@@ -130,10 +142,12 @@ static struct _errno_str_t  rt_errno_strs[] =
  */
 const char *rt_strerror(rt_err_t error)
 {
+    int i = 0;
+
     if (error < 0)
         error = -error;
 
-    for (int i = 0; i < sizeof(rt_errno_strs) / sizeof(rt_errno_strs[0]); i++)
+    for (i = 0; i < sizeof(rt_errno_strs) / sizeof(rt_errno_strs[0]); i++)
     {
         if (rt_errno_strs[i].error == error)
             return rt_errno_strs[i].str;
@@ -712,8 +726,10 @@ RTM_EXPORT(rt_strdup);
 void rt_show_version(void)
 {
     rt_kprintf("\n \\ | /\n");
-#ifdef RT_USING_SMART
+#if defined(RT_USING_SMART)
     rt_kprintf("- RT -     Thread Smart Operating System\n");
+#elif defined(RT_USING_NANO)
+    rt_kprintf("- RT -     Thread Nano Operating System\n");
 #else
     rt_kprintf("- RT -     Thread Operating System\n");
 #endif
@@ -1537,6 +1553,110 @@ rt_weak int rt_kprintf(const char *fmt, ...)
 RTM_EXPORT(rt_kprintf);
 #endif /* RT_USING_CONSOLE */
 
+#ifdef __GNUC__
+rt_weak rt_err_t rt_backtrace(void)
+{
+    struct rt_hw_backtrace_frame frame = {
+        .fp = (rt_base_t)__builtin_frame_address(0U),
+        .pc = ({__label__ pc; pc: (rt_base_t)&&pc;})
+    };
+    rt_hw_backtrace_frame_unwind(rt_thread_self(), &frame);
+    return rt_backtrace_frame(&frame);
+}
+
+#else /* otherwise not implemented */
+rt_weak rt_err_t rt_backtrace(void)
+{
+   /* LOG_W cannot work under this environment */
+    rt_kprintf("%s is not implemented\n", __func__);
+    return -RT_ENOSYS;
+}
+#endif
+
+rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame)
+{
+    long nesting = 0;
+
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f\n");
+
+    while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
+    {
+        rt_kprintf(" 0x%lx", (rt_ubase_t)frame->pc);
+        if (rt_hw_backtrace_frame_unwind(rt_thread_self(), frame))
+        {
+            break;
+        }
+        nesting++;
+    }
+    rt_kprintf("\n");
+    return RT_EOK;
+}
+
+rt_err_t rt_backtrace_thread(rt_thread_t thread)
+{
+    rt_err_t rc;
+    struct rt_hw_backtrace_frame frame;
+    if (thread)
+    {
+        rc = rt_hw_backtrace_frame_get(thread, &frame);
+        if (rc == RT_EOK)
+        {
+            rc = rt_backtrace_frame(&frame);
+        }
+    }
+    else
+    {
+        rc = -RT_EINVAL;
+    }
+    return rc;
+}
+
+#ifdef RT_USING_LIBC
+#include <stdlib.h> /* for string service */
+
+static void cmd_backtrace(int argc, char** argv)
+{
+    rt_ubase_t pid;
+    char *end_ptr;
+
+    if (argc != 2)
+    {
+        if (argc == 1)
+        {
+            rt_kprintf("[INFO] No thread specified\n"
+                "[HELP] You can use commands like: backtrace %p\n"
+                "Printing backtrace of calling stack...\n",
+                rt_thread_self());
+            rt_backtrace();
+            return ;
+        }
+        else
+        {
+            rt_kprintf("please use: backtrace [thread_address]\n");
+            return;
+        }
+    }
+
+    pid = strtoul(argv[1], &end_ptr, 0);
+    if (end_ptr == argv[1])
+    {
+        rt_kprintf("Invalid input: %s\n", argv[1]);
+        return ;
+    }
+
+    if (pid && rt_object_get_type((void *)pid) == RT_Object_Class_Thread)
+    {
+        rt_thread_t target = (rt_thread_t)pid;
+        rt_kprintf("backtrace %s(0x%lx), from %s\n", target->parent.name, pid, argv[1]);
+        rt_backtrace_thread(target);
+    }
+    else
+        rt_kprintf("Invalid pid: %ld\n", pid);
+}
+MSH_CMD_EXPORT_ALIAS(cmd_backtrace, backtrace, print backtrace of a thread);
+
+#endif /* RT_USING_LIBC */
+
 #if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)
 #ifdef RT_USING_HOOK
 static void (*rt_malloc_hook)(void *ptr, rt_size_t size);
@@ -1706,7 +1826,7 @@ rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
     RT_ASSERT(end_align > begin_align);
 
     /* Initialize system memory heap */
-    _MEM_INIT("heap", begin_addr, end_align - begin_align);
+    _MEM_INIT("heap", (void *)begin_align, end_align - begin_align);
     /* Initialize multi thread contention lock */
     _heap_lock_init();
 }
@@ -2061,6 +2181,7 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
 #endif /*RT_USING_MODULE*/
         {
             rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
+            rt_backtrace();
             while (dummy == 0);
         }
     }

@@ -7,8 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
-#define RT_USING_SMP
-#define RT_CPUS_NR 4
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -19,7 +18,6 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 4096
-#define SYSTEM_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
@@ -31,7 +29,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -51,14 +48,12 @@
 #define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP_ISR
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50001
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
@@ -87,6 +82,7 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define FINSH_USING_OPTION_COMPLETION
 
 /* DFS: device virtual file system */
 
@@ -127,22 +123,32 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 1024
+#define RT_USING_CAN
+#define RT_CAN_USING_CANFD
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
+#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
+#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 512
+#define RT_SDIO_STACK_SIZE 4096
 #define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 1024
+#define RT_MMCSD_STACK_SIZE 4096
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_SPI
+#define RT_USING_QSPI
 #define RT_USING_DEV_BUS
+#define RT_USING_KTIME
 
 /* Using USB */
 
 
 /* C/C++ and POSIX layer */
+
 
 /* ISO-ANSI C layer */
 
@@ -245,7 +251,12 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
-#define RT_USING_KTIME
+
+/* Memory management */
+
+
+/* Memory protection */
+
 
 /* RT-Thread Utestcases */
 
@@ -285,6 +296,9 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
@@ -314,9 +328,6 @@
 
 
 /* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -357,7 +368,6 @@
 
 /* Other */
 
-
 /* Signal IO */
 
 
@@ -365,15 +375,26 @@
 
 /* Hardware Drivers */
 
+
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_IOPAD
 #define BSP_USING_UART
+#define RT_USING_UART0
 #define RT_USING_UART1
+#define BSP_USING_SPI
+#define RT_USING_SPIM0
+#define BSP_USING_GPIO
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
-#define BSP_USING_SDIO
-#define BSP_USING_SDCARD_FATFS
-#define USING_SDIO0
+#define BSP_USING_PWM
+#define RT_USING_PWM2
+#define BSP_USING_I2C
+#define I2C_USE_MIO
+#define RT_USING_MIO0
+#define RT_USING_MIO1
+#define BSP_USING_DC
+#define RT_USING_DC_CHANNEL1
 
 /* Board extended module Drivers */
 
@@ -384,34 +405,33 @@
 #define TARGET_ARMV8_AARCH32
 #define USE_AARCH64_L1_TO_AARCH32
 
-/* Board Configuration */
+/* Soc configuration */
 
 #define TARGET_PHYTIUMPI
+#define SOC_NAME "phytiumpi"
+#define SOC_CORE_NUM 4
+#define F32BIT_MEMORY_ADDRESS 0x80000000
+#define F32BIT_MEMORY_LENGTH 0x80000000
+#define F64BIT_MEMORY_ADDRESS 0x2000000000
+#define F64BIT_MEMORY_LENGTH 0x800000000
 #define TARGET_E2000
 #define DEFAULT_DEBUG_PRINT_UART1
 
-/* Components Configuration */
+/* Board Configuration */
 
-#define USE_GIC
-#define ENABLE_GICV3
-#define USE_IOPAD
-#define ENABLE_IOPAD
-#define USE_SERIAL
+#define BOARD_NAME "firefly"
+#define FIREFLY_DEMO_BOARD
 
-/* Usart Configuration */
+/* IO mux configuration when board start up */
 
-#define ENABLE_Pl011_UART
-#define USE_ETH
-
-/* Eth Configuration */
-
-#define ENABLE_FXMAC
-#define FXMAC_PHY_COMMON
 
 /* Sdk common configuration */
 
 #define LOG_ERROR
 #define USE_DEFAULT_INTERRUPT_CONFIG
 #define INTERRUPT_ROLE_MASTER
+
+/* Image information configuration */
+
 
 #endif

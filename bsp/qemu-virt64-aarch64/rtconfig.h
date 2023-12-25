@@ -28,8 +28,9 @@
 
 #define RT_KSERVICE_USING_STDLIB
 #define RT_KPRINTF_USING_LONGLONG
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -50,30 +51,29 @@
 #define RT_USING_MEMHEAP_AUTO_BINDING
 #define RT_USING_MEMTRACE
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
 #define RT_USING_INTERRUPT_INFO
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50001
+#define RT_VER_NUM 0x50100
 #define RT_USING_STDC_ATOMIC
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 
-/* RT-Thread Architecture */
+/* AArch64 Architecture Configuration */
 
-#define ARCH_CPU_64BIT
-#define RT_USING_CACHE
-#define ARCH_MM_MMU
-#define ARCH_ARM
-#define ARCH_ARM_MMU
-#define ARCH_ARMV8
 #define ARCH_TEXT_OFFSET 0x80000
 #define ARCH_RAM_OFFSET 0x40000000
 #define ARCH_SECONDARY_CPU_STACK_SIZE 4096
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+#define ARCH_CPU_64BIT
+#define RT_USING_CACHE
+#define RT_USING_CPU_FFS
+#define ARCH_MM_MMU
+#define ARCH_ARM
+#define ARCH_ARM_MMU
+#define ARCH_ARMV8
 
 /* RT-Thread Components */
 
@@ -94,6 +94,7 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define FINSH_USING_OPTION_COMPLETION
 
 /* DFS: device virtual file system */
 
@@ -124,6 +125,7 @@
 
 /* Device Drivers */
 
+#define RT_USING_DM
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
@@ -137,8 +139,8 @@
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
-#define RT_USING_FDT
-#define RT_USING_FDTLIB
+#define RT_USING_PM
+#define PM_TICKLESS_THRESHOLD_TIME 2
 #define RT_USING_RTC
 #define RT_USING_SOFT_RTC
 #define RT_USING_DEV_BUS
@@ -150,13 +152,23 @@
 #define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
 #define RT_USING_VIRTIO_GPU
 #define RT_USING_VIRTIO_INPUT
+#define RT_USING_OFW
+#define RT_FDT_EARLYCON_MSG_SIZE 128
+#define RT_USING_KTIME
 
 /* Using USB */
 
 
 /* C/C++ and POSIX layer */
 
-#define RT_LIBC_DEFAULT_TIMEZONE 8
+/* ISO-ANSI C layer */
+
+/* Timezone and Daylight Saving Time */
+
+#define RT_LIBC_USING_LIGHT_TZ_DST
+#define RT_LIBC_TZ_DEFAULT_HOUR 8
+#define RT_LIBC_TZ_DEFAULT_MIN 0
+#define RT_LIBC_TZ_DEFAULT_SEC 0
 
 /* POSIX (Portable Operating System Interface) layer */
 
@@ -182,9 +194,18 @@
 
 /* Utilities */
 
+#define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
-#define RT_USING_RESOURCE_ID
+#define RT_USING_ADT_BITMAP
+#define RT_USING_ADT_HASHMAP
+#define RT_USING_ADT_REF
+
+/* Memory management */
+
+
+/* Memory protection */
+
 
 /* RT-Thread Utestcases */
 
@@ -200,6 +221,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
 
 
 /* IoT Cloud */
@@ -224,9 +248,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -246,11 +267,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -266,7 +295,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -290,6 +319,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 
