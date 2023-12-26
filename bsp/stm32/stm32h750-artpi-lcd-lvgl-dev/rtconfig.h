@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -17,13 +18,16 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
+#define RT_USING_TIMER_SOFT
+#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_STACK_SIZE 512
 
 /* kservice optimization */
 
+#define RT_KSERVICE_USING_STDLIB
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -42,16 +46,13 @@
 #define RT_USING_MEMHEAP_AS_HEAP
 #define RT_USING_MEMHEAP_AUTO_BINDING
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart4"
-#define RT_VER_NUM 0x50001
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_CACHE
-#define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -76,9 +77,18 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define FINSH_USING_OPTION_COMPLETION
 
 /* DFS: device virtual file system */
 
+#define RT_USING_DFS
+#define DFS_USING_POSIX
+#define DFS_USING_WORKDIR
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_V1
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
+#define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
 
@@ -91,17 +101,14 @@
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_SPI
+#define RT_USING_AUDIO
+#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
+#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
+#define RT_AUDIO_RECORD_PIPE_SIZE 2048
 #define RT_USING_TOUCH
 
 /* Using USB */
 
-#define RT_USING_USB
-#define RT_USING_USB_DEVICE
-#define RT_USBD_THREAD_STACK_SZ 4096
-#define USB_VENDOR_ID 0x0FFE
-#define USB_PRODUCT_ID 0x0001
-#define _RT_USB_DEVICE_NONE
-#define RT_USB_DEVICE_NONE
 
 /* C/C++ and POSIX layer */
 
@@ -124,6 +131,9 @@
 
 
 /* Network */
+
+
+/* Memory protection */
 
 
 /* Utilities */
@@ -172,17 +182,11 @@
 
 /* LVGL: powerful and easy-to-use embedded GUI library */
 
-#define PKG_USING_LVGL
-#define PKG_LVGL_THREAD_PRIO 20
-#define PKG_LVGL_THREAD_STACK_SIZE 4096
-#define PKG_LVGL_DISP_REFR_PERIOD 5
-#define PKG_LVGL_USING_V08034
-#define PKG_LVGL_VER_NUM 0x080304
-#define PKG_USING_LV_MUSIC_DEMO
-#define PKG_USING_GUI_GUIDER_DEMO
 
 /* u8g2: a monochrome graphic library */
 
+#define PKG_USING_HELIX
+#define PKG_USING_HELIX_V100
 
 /* tools packages */
 
@@ -200,34 +204,6 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
-#define PKG_USING_TINYUSB
-#define PKG_TINYUSB_STACK_SIZE 2048
-#define PKG_TINYUSB_THREAD_PRIORITY 8
-#define PKG_TINYUSB_MEM_SECTION ".data"
-#define PKG_TINYUSB_MEM_ALIGN 4
-#define PKG_TINYUSB_RHPORT_NUM_1
-#define PKG_TINYUSB_RHPORT_NUM 0
-#define PKG_TINYUSB_FULL_SPEED
-#define PKG_TINYUSB_DEVICE_PORT_SPEED 0x00
-#define PKG_TINYUSB_DEVICE_ENABLE
-#define PKG_TINYUSB_DEVICE_VID 0xCAFE
-#define PKG_TINYUSB_DEVICE_PID 0x4000
-#define PKG_TINYUSB_DEVICE_MANUFACTURER "TinyUSB"
-#define PKG_TINYUSB_DEVICE_PRODUCT "TinyUSB Device"
-#define PKG_TINYUSB_EDPT0_SIZE 64
-#define PKG_TINYUSB_DEVICE_CURRENT 100
-#define PKG_TINYUSB_DEVICE_CDC
-#define CFG_TUD_CDC 1
-#define PKG_TINYUSB_DEVICE_CDC_STRING "TinyUSB CDC"
-#define PKG_TINYUSB_DEVICE_CDC_EPNUM_NOTIF 1
-#define PKG_TINYUSB_DEVICE_CDC_EPNUM 2
-#define PKG_TINYUSB_DEVICE_CDC_RX_BUFSIZE 64
-#define PKG_TINYUSB_DEVICE_CDC_TX_BUFSIZE 64
-#define PKG_TINYUSB_DEVICE_EXAMPLE
-#define PKG_TINYUSB_DEVICE_EXAMPLE_CDC
-#define PKG_TINYUSB_DEBUG_NO
-#define CFG_TUSB_DEBUG 0
-#define PKG_USING_TINYUSB_LATEST_VERSION
 
 /* peripheral libraries and drivers */
 
@@ -236,6 +212,8 @@
 
 /* touch drivers */
 
+#define PKG_USING_FT6236
+#define PKG_USING_FT6236_LATEST_VERSION
 
 /* Kendryte SDK */
 
@@ -300,11 +278,6 @@
 
 /* Board extended module */
 
-#define ART_PI_USING_MEDIA_IO
-#define BSP_USING_SPI_LCD_ILI9488
-#define PKG_USING_PERSIMMON_SRC
-#define MEDIA_IO_USING_SCREEN
-#define BSP_USING_LVGL
 
 /* Onboard Peripheral Drivers */
 
@@ -324,6 +297,12 @@
 
 #define BSP_I2C2_SCL_PIN 127
 #define BSP_I2C2_SDA_PIN 125
+#define BSP_USING_I2C3
+
+/* Notice: PH12 --> 124; PH11 --> 123 */
+
+#define BSP_I2C3_SCL_PIN 123
+#define BSP_I2C3_SDA_PIN 124
 #define BSP_USING_SDRAM
 
 /* External Libraries */
